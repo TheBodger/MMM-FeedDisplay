@@ -107,8 +107,8 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date(); // used for highlight checking
 
-				console.log("@@@@@@@@@@@@@@@ sourcetitle");
-				console.log(payload.sourcetitle);
+				//console.log("@@@@@@@@@@@@@@@ sourcetitle");
+				//console.log(payload.sourcetitle);
 
 				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { 
 					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
@@ -164,7 +164,7 @@ module.exports = NodeHelper.create({
 				article['sentdate'] = new Date();
 
 				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { //show a substring of the title, maybe look for some better meta
-					article['source'] = payload.title.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
+					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
 				}
 
 				self.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles.push(article);
@@ -248,7 +248,7 @@ module.exports = NodeHelper.create({
 	},
 
 	showstatus: function (moduleinstance) {
-		console.log("MMM Module: " + this.identifier);
+		//console.log("MMM Module: " + moduleinstance);
 		console.log('============================ start of status ========================================');
 
 		console.log('config for consumer: ' + moduleinstance);
@@ -286,7 +286,7 @@ module.exports = NodeHelper.create({
 	},
 
 	socketNotificationReceived: function (notification, payload) {
-		console.log(this.name + " NODE_HELPER received a socket notification: " + notification + " - Payload: " + payload);
+		//console.log(this.name + " NODE_HELPER received a socket notification: " + notification + " - Payload: " + payload);
 
 		//we will receive a payload with the consumerid in it so we can store data and respond to the correct instance of
 		//the caller - i think that this may be possible!!

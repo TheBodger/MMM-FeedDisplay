@@ -160,7 +160,7 @@ Module.register("MMM-FeedDisplay", {
 
 				//send the data to the aggregator
 
-				console.log(this.name + "  >>>>>> Sending data: " + payload.title + " " + payload.consumerid + " " + payload.providerid);
+				//console.log(this.name + "  >>>>>> Sending data: " + payload.title + " " + payload.consumerid + " " + payload.providerid);
 
 				this.sendNotificationToNodeHelper("AGGREGATE_THIS", { moduleinstance: self.identifier, payload :payload});
 
@@ -222,7 +222,7 @@ Module.register("MMM-FeedDisplay", {
 
 		//clear the timer if it exists
 
-		console.log("clearing the timer");
+		//console.log("clearing the timer");
 
 		if (this.timer != '') {
 			clearInterval(this.timer);
@@ -301,6 +301,10 @@ Module.register("MMM-FeedDisplay", {
 			//if wrapping 		//displaywraparticles: true,
 
 			tidx = aidx % this.totalarticlecount;
+
+			if (self.config.displayarticlimage && this.displayarticles[tidx].imageURL != null) {
+				trext = trext + `<div> <img src='${this.displayarticles[tidx].imageURL}' width='200px' style='margin-left: auto;margin-right: auto;display: block; mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, black 3%, black 97%, transparent 100%);' alt='' /></div>`
+            } 
 
 			newarticleclass = '';
 
