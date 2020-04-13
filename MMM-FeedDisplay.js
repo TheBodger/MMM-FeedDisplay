@@ -6,6 +6,7 @@ var feedDisplayPayload = { consumerid: '', providerid: '', payload: '' };
 
 Module.register("MMM-FeedDisplay", {
 
+
 	// Default module config.
 
 	defaults: {
@@ -109,7 +110,7 @@ Module.register("MMM-FeedDisplay", {
 
 	getScripts: function () {
 		return [
-			'moment.js', // this file is available in the vendor folder, so it doesn't need to be available in the module folder.
+			'moment.js',	// this file is available in the vendor folder, so it doesn't need to be available in the module folder.
 		]
 	},
 
@@ -302,9 +303,18 @@ Module.register("MMM-FeedDisplay", {
 
 			tidx = aidx % this.totalarticlecount;
 
+			Log.log(`>>>>>>>${self.identifier} ${self.config.displayarticlimage} ${this.displayarticles[tidx].source} ${this.displayarticles[tidx].imageURL} ` );
+
 			if (self.config.displayarticlimage && this.displayarticles[tidx].imageURL != null) {
-				trext = trext + `<div> <img src='${this.displayarticles[tidx].imageURL}' width='200px' style='margin-left: auto;margin-right: auto;display: block; mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, black 3%, black 97%, transparent 100%);' alt='' /></div>`
-            } 
+				var maxImageHeight = '200px'
+				var imageLink = document.createElement('div');
+				imageLink.id = "MMM-FeedDisplay-image";
+				var actualImage = document.createElement('div');
+				actualImage.style = `webkit-mask-image:-webkit-linear-gradient(to bottom, rgba(0,0,0,0) 0%, black 3%, black 97%, transparent 100%); overflow:hidden; max-height:${maxImageHeight}; `;
+				actualImage.innerHTML = "<img src='" + self.displayarticles[tidx].imageURL + "' width='100%' style='webkit-mask-image: -webkit-linear-gradient(to right, rgba(0, 0, 0, 0) 0%, black 3%, black 97%, transparent 100%);' />";
+				imageLink.appendChild(actualImage);
+				trext = trext + imageLink.outerHTML;
+			}
 
 			newarticleclass = '';
 
@@ -317,8 +327,6 @@ Module.register("MMM-FeedDisplay", {
 			if (self.config.displayarticledescription) {
 				trext = trext + `<span>${this.displayarticles[tidx].description}</span><br>`
 			};
-
-			
 
 		}
 

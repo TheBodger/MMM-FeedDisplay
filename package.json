@@ -17,7 +17,7 @@
     "module"
   ],
   "dependencies": {
-
+    "feedparser": "^2.2.9"
   },
   "license": "MIT",
   "bugs": {

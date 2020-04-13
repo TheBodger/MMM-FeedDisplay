@@ -2,3 +2,6 @@
     max-width: calc(33.3333333vw - 40px);
 }
 
+#MMM-FeedDisplay-image {
+    width: 300px;
+}
