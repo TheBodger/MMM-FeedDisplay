@@ -2,6 +2,70 @@
     max-width: calc(33.3333333vw - 40px);
 }
 
-#MMM-FeedDisplay-image {
-    width: 300px;
+.crop {
+    overflow: hidden;
+    max-height: 18vw;
 }
+
+.imgstyle {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-width: 18vw; /* controls the resizing of the image */
+    min-height: 8vw;
+}
+
+.txtstyle {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.newarticle {
+
+    color: yellow;
+}
+
+.divtextoverimg {
+    width: 100%;
+    position: absolute;
+    left: 9px;
+    bottom: 6px;
+    max-width: calc(100% - 18px); /* must have white space around the operand */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.1) 7%, rgba(0,0,0,0.3) 14%, rgba(0,0,0,0.4) 31%,rgba(0,0,0,0.4)94%,rgba(0,0,0,0.0)100%);
+    text-align: center;
+
+}
+
+.divtextbelowimg {
+    width: 100%;
+    position: relative;
+    max-width: 18vw; /* must have white space around the operand */
+    /*background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.1) 7%, rgba(0,0,0,0.3) 14%, rgba(0,0,0,0.4) 31%,rgba(0,0,0,0.4)94%,rgba(0,0,0,0.0)100%);*/
+    text-align:justify;
+}
+
+.altrow1 {
+    color: rgb(180, 180, 180);
+}
+
+.newaltrow1 {
+    color: rgb(180, 180, 0);
+}
+
+.altrow2 {
+    color: rgb(220, 220, 220);
+}
+
+.newaltrow2 {
+    color: rgb(220, 220, 0 );
+}
+
+.maintext {
+    text-align: left;
+}
+
+.subtext {
+    text-align: right
+}
+

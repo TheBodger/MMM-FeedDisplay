@@ -10,6 +10,7 @@ module.exports = NodeHelper.create({
 
 		console.log(this.name + ' is started!');
 		this.consumerstorage = {}; // contains the config and feedstorage
+
 	},
 
 	setconfig: function (aconfig) {
@@ -26,30 +27,24 @@ module.exports = NodeHelper.create({
 
 		this.consumerstorage[moduleinstance] = { config: config, feedstorage: {} };
 
-		//console.log(">>>> loaded config for consumer module: " + this.consumerstorage[moduleinstance].config.id)
-		//console.log(this.consumerstorage[moduleinstance]);
+		this.alternatefeedorder = (this.consumerstorage[moduleinstance].config.articlemergetype.toLowerCase() == 'alternate'); // get an easier boolean to work with
 
 	},
 
 	processfeeds: function (newfeeds) {
-
-		//console.log(newfeeds);
 
 		var self = this;
 
 		var moduleinstance = newfeeds.moduleinstance; //needed so the correct module knows what to do with this data
 		var payload = newfeeds.payload;
 
-		//console.log(">>>>   " + this.consumerstorage[moduleinstance].config.id + " " + payload.title + " " + payload.consumerid + " " + payload.providerid);
-
 		//depending on the config options for this moduleinstance
 
-		//articlemergefeeds: false, //merge all feed details before applying the order type
+		//articlemergefeeds: false,		merge all feed details before applying the order type
+		//								alternate - merge by taking alternate articles from each feed(i.e. 1st, 1st, 1st, 2nd, 2nd, 2nd, 3rd, 3rd, 4th), 
+		//									will apply sort order before merging 
 		//articleordertype: 'default', //options are default, date(same as age), age,
 		//articleorder: 'ascending', //options are ascending or descending
-
-		//console.log("@@@@@@@@@@@@@@@@@@@@@");
-		//console.log(this.consumerstorage[moduleinstance]);
 
 		//if we are keeping the feeds separate, then we will have to use the provided feed title as a key into the feedstorage
 		//otherwise we will use a key of "merged feed"
@@ -59,7 +54,7 @@ module.exports = NodeHelper.create({
 				var feedstorekey = 'merged feed';
 				break;
 			case 'alternate':
-				var feedstorekey = 'alternate feed';
+				var feedstorekey = payload.title; // uses the same as for default, alternate merging happens after the sort
 				break;
 			default:
 				var feedstorekey = payload.title;
@@ -67,12 +62,11 @@ module.exports = NodeHelper.create({
 
 		//now we add the provided feeds to the feedstorage
 		//assumption is that the provider will NOT send duplicate feeds so we just add them to the end before processing order commands
+		//the feedstorage will occur many times if there is no merging
 
 		var feedstorage = { key: '', sortidx: -1, titles: [], sourcetitles: [], providers: [], articles: [], sortkeys: [] };
 
 		//if not added create a new entry
-
-		//console.log("<><><><><><> " + feedstorekey);
 
 		if (this.consumerstorage[moduleinstance].feedstorage[feedstorekey] == null) {
 
@@ -93,7 +87,7 @@ module.exports = NodeHelper.create({
 				//add each article and at the same time, depending on how we are sorting this build a key idx pair
 
 				switch (self.consumerstorage[moduleinstance].config.articleordertype.toLowerCase()) {
-					case "default": //no sorting  but we need the indexes later
+					case "default": //no sorting  but we need the corect indexes later
 						sortkey.idx = sortidx += 1;
 						sortkeys.push(sortkey);
 						break;
@@ -107,10 +101,7 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date(); // used for highlight checking
 
-				//console.log("@@@@@@@@@@@@@@@ sourcetitle");
-				//console.log(payload.sourcetitle);
-
-				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { 
+				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { //add the source data if requested
 					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
 				}
 
@@ -126,12 +117,6 @@ module.exports = NodeHelper.create({
 		}
 		else { //it exists so just update any data we need to
 
-			//console.log("??????????????? " + feedstorekey);
-			//console.log(this.consumerstorage[moduleinstance].feedstorage[feedstorekey]);
-			//console.log(this.consumerstorage[moduleinstance].feedstorage[feedstorekey].providers);
-			//console.log(this.consumerstorage[moduleinstance].feedstorage[feedstorekey].titles);
-			//console.log(this.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles);
-
 			if (this.consumerstorage[moduleinstance].feedstorage[feedstorekey].providers.indexOf(payload.providerid) == -1) {
 				this.consumerstorage[moduleinstance].feedstorage[feedstorekey].providers.push(payload.providerid);
 			}
@@ -142,7 +127,7 @@ module.exports = NodeHelper.create({
 
 			//and we know that the actual articles are unique so just add without checking
 
-			var sortidx = self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortidx; //make sure we reference the coorect location in our output
+			var sortidx = self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortidx; //make sure we reference the correct location in our output
 
 			payload.payload.forEach(function (article) {
 
@@ -163,7 +148,7 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date();
 
-				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { //show a substring of the title, maybe look for some better meta
+				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { 
 					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
 				}
 
@@ -174,8 +159,6 @@ module.exports = NodeHelper.create({
 			self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortidx = sortidx;
 
 		}
-
-		//console.log(this.consumerstorage[moduleinstance]);
 
 		//now create a payload in the correct order with multple titles if required
 
@@ -188,58 +171,121 @@ module.exports = NodeHelper.create({
 		//	}
 		//}
 
-		//articleordertype: 'default', //options are default - fifo, date(same as age), age, - we may want other options such as by provider or alphabetically title or most active feed
-		//articleorder: 'ascending', //options are ascending or descending
 
 		//so we have received something new, so we send everything we have back to the consumer instance even if merged
 
-		//return {titles: [Array], articles: [Array]}
+		//we process all the available feedstorages that have been loaded with articles
 
-		var titles = self.consumerstorage[moduleinstance].feedstorage[feedstorekey].titles;
-		var sortkeys = self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys;
 		var articles = [];
+		var titles = [];
 
-		switch (this.consumerstorage[moduleinstance].config.articleordertype.toLowerCase()) {
-			case "default":
-				break;
-			case "date": ; //drop through to age as identical processing
-			case "age":
-				//sort the sort keys, and build a new payload of articles based on the reordered stuff
-				//as sorts are in place we need to copy the sort keys 
+		for (var key in self.consumerstorage[moduleinstance].feedstorage) {
 
-				//here we use a numeric sort
+			//var titles = self.consumerstorage[moduleinstance].feedstorage[key].titles; //ignore for the time being
+			var sortkeys = self.consumerstorage[moduleinstance].feedstorage[key].sortkeys;
+			
+			switch (this.consumerstorage[moduleinstance].config.articleordertype.toLowerCase()) {
+				case "default":
+					break;
+				case "date": ; //drop through to age as identical processing
+				case "age":
+					//sort the sort keys, and build a new payload of articles based on the reordered stuff
+					//as sorts are in place we need to copy the sort keys 
 
-				//sortkeys.forEach(function (sortkey) {
-				//	console.log(sortkey.key, sortkey.idx);
-				//});
+					//here we use a simple numeric sort because it is age, will need alphabetic solution later
 
-				//console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+					if (self.consumerstorage[moduleinstance].config.articleorder.toLowerCase() == 'descending') {
+						sortkeys.sort(function (a, b) { return b.key - a.key });
+					}
+					else {
+						sortkeys.sort(function (a, b) { return a.key - b.key });
+					}
 
-				if (self.consumerstorage[moduleinstance].config.articleorder.toLowerCase() == 'descending') {
-					sortkeys.sort(function (a, b) { return b.key - a.key });
-				}
-				else {
-					sortkeys.sort(function (a, b) { return a.key - b.key });
-				}
+					break;
+			}
 
-				//sortkeys.forEach(function (sortkey) {
-				//	console.log(sortkey.key, sortkey.idx);
-				//});
-				
-				break;
+			if (self.alternatefeedorder) {
+
+				self.consumerstorage[moduleinstance].feedstorage[key]['sortedkeys'] = sortkeys;
+			}
+
+			else
+
+			//now build the output based on the reordered list of sort items indexes.
+
+			{
+				sortkeys.forEach(function (sortkey) {
+
+					articles.push(self.consumerstorage[moduleinstance].feedstorage[key].articles[sortkey.idx]);
+
+				});
+			}
+
 		}
 
-		//now build the output
+		var feedkeys = [];
+		var feedkeyidx = 0;
 
-		sortkeys.forEach(function (sortkey) {
-			//console.log("%%%%%%%%%%%%%%%%%%% ", sortkey.key, sortkey.idx, moduleinstance, feedstorekey, self.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles[sortkey.idx].age);
+		if (this.alternatefeedorder) {
 
-			articles.push(self.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles[sortkey.idx]); 
-		});
+			//iterate through the stored sortedkeys, keyed by feedkey in a 2 demensional fashion
 
-		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { feedkey: feedstorekey, payload: { titles: titles, articles: articles } });
+			//1) get the largest array of articles
+
+			var maxarticleslength = 0
+
+			for (var key in self.consumerstorage[moduleinstance].feedstorage) {
+				maxarticleslength = Math.max(maxarticleslength, self.consumerstorage[moduleinstance].feedstorage[key].articles.length);
+				feedkeys[feedkeyidx++] = key;
+			}
+
+			//2) iterate throgh the arrays to build a alternated set of data
+			//		attempt every entry up to the largest one available
+			//		count the number of feeds currently stored using .length of the just stored array of feed keys
+			//		get an index at the feed level
+			//		check that we actually have a sortidx to use (may have gone past the end of this particular feed array of articles)
+			//		then push it to the output article array
+
+			var sortedkeys = []
+
+			for (var lvl1idx = 0; lvl1idx < maxarticleslength; lvl1idx++) {
+
+				for (var lvl2idx = 0; lvl2idx < feedkeys.length; lvl2idx++) {
+
+					var feedkey = feedkeys[lvl2idx];
+
+					sortedkeys = self.consumerstorage[moduleinstance].feedstorage[feedkey].sortedkeys[lvl1idx]
+
+					if (sortedkeys != null) {
+
+						articles.push(self.consumerstorage[moduleinstance].feedstorage[feedkey].articles[sortedkeys.idx]);
+
+					}
+
+				}
+
+			}
+
+        }
+
+
+		// all data is in correct order so we can send it
+
+		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { payload: { titles: titles, articles: articles } });
+
+		const braidArrays = (...arrays) => {
+			const braided = [];
+			for (let i = 0; i < Math.max(...arrays.map(a => a.length)); i++) {
+				arrays.forEach((array) => {
+					if (array[i] !== undefined) braided.push(array[i]);
+				});
+			}
+			return braided;
+		};
 
 	},
+
+
 
 	mergearticles: function (articlelist) {
 

@@ -20,7 +20,8 @@ Module.register("MMM-FeedDisplay", {
 		displayfeedtitle: false,			//display whatever title(s) of the feed has been provided for a group of arcticles above the articles
 		displayarticlecount: 10,			//number of articles to display
 		displayarticlimage: false,			//if an image has been passed as a url, then include it, if missing dont (no nasty missing image /size)
-		displaysourcenamelength:4,			//displays the 1st n characters of the source name before each item, good for merge and alternate
+		displaysourcenamelength: 4,			//displays the 1st n characters of the source name before each item, good for merge and alternate
+		displayarticleage: false,			//adds the age of the article to the meta details line
 		displayarticletitle: true,
 		displayarticledescription: false,	//displays whatever is in the description feed as HTML
 		displaycleaneddescription: false,	//removes any html tags leaving just text
@@ -29,11 +30,14 @@ Module.register("MMM-FeedDisplay", {
 											//default - display the next n articles, 
 											//scroll - move the articles up by 1 at each refresh
 		displayformatstyle: 'default',		//the format to use for whatever article options to display have been included
-											//default - mirror the newfeeder format for no image
+											//default - mirror the tweeter format for no image
 											//default - mirror the instagram2020 format with an image
-		displaywraparticles: true,			//when the last aricle is appearing on the display, add articles from the start to fill any empty slots
+		displaywraparticles: true,			//when the last article is appearing on the display, add articles from the start to fill any empty slots
 		displayhilightnewarticles: true,	//a never before shown feeds will be hilighted (all initially)
-		displayclearhilighttime:5000,		//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
+		displayclearhilighttime: 5000,		//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
+		displaymodulewidth: "10vw",			//constrain the width to this // maybe should go into the css
+		displaytextbelowimage: false,		//eithe display the text for an image below it or over it
+
 
 		//article ordered details, define how the aggregator returns the current list of articles
 
@@ -172,15 +176,23 @@ Module.register("MMM-FeedDisplay", {
 
 	getStringTimeDifference: function (ageinmilliseconds) {
 		var diffSecs = Math.round(ageinmilliseconds / 1000);
-		if (diffSecs < 60) {
+		if (diffSecs < 60) { //seconds
 			return diffSecs + "s";
 		}
-		if (diffSecs < (60 * 60)) {
+		if (diffSecs < (60 * 60)) {//seconds * minutes
 			var diffMins = Math.round(diffSecs / 60);
 			return diffMins + "m";
 		}
-		var diffHours = Math.round(diffSecs / (60 * 60));
-		return diffHours + "h";
+		if (diffSecs < (60 * 60 * 24)) {//seconds * minutes * hours
+			var diffHours = Math.round(diffSecs / (60 * 60));
+			return diffHours + "h";
+		}
+		if (diffSecs < (60 * 60 * 24 * 7)) {//seconds * minutes * hours * days
+			var diffDays = Math.round(diffSecs / (60 * 60 * 24));
+			return diffDays + "d";
+		}
+		var diffWeeks = Math.round(diffSecs / (60 * 60 * 24 * 7));
+		return diffWeeks + "w";
 	},
 
 	//ALL_MODULES_STARTED - All modules are started.You can now send notifications to other modules.
@@ -261,7 +273,7 @@ Module.register("MMM-FeedDisplay", {
 
 			self.buildwrapper();
 
-			self.updateDom(); // speed in milliseconds
+			self.updateDom(150); // speed in milliseconds
 			
 		}, this.config.displayrefreshtime); //perform every ? milliseconds.
 
@@ -279,7 +291,7 @@ Module.register("MMM-FeedDisplay", {
 
 		var self = this;
 
-		var trext = '<div class="feeddisplay small">';
+		var trext = '';
 
 		//pull the articles starting at the current idx for the display count, wrapping if required
 		//wrapping is required when the aidx > totalarticlcount 
@@ -289,11 +301,11 @@ Module.register("MMM-FeedDisplay", {
 
 		var endidx = this.config.displayarticlecount;
 
-		var newarticleclass = '';
-
 		//if wrapping, increase endidx so we always show a set of wrapped articles
 
 		endidx = endidx + this.displayarticleidx;
+
+		var altrowclassname = "altrow1";
 
 		for (aidx = this.displayarticleidx; aidx < endidx; aidx++) {
 
@@ -303,34 +315,98 @@ Module.register("MMM-FeedDisplay", {
 
 			tidx = aidx % this.totalarticlecount;
 
-			Log.log(`>>>>>>>${self.identifier} ${self.config.displayarticlimage} ${this.displayarticles[tidx].source} ${this.displayarticles[tidx].imageURL} ` );
+			if (self.config.displayarticlimage && this.displayarticles[tidx].imageURL != null) { //just works for image only feeds initially
 
-			if (self.config.displayarticlimage && this.displayarticles[tidx].imageURL != null) {
-				var maxImageHeight = '200px'
-				var imageLink = document.createElement('div');
-				imageLink.id = "MMM-FeedDisplay-image";
+				var imageMain = document.createElement('div');
+				imageMain.className = 'div_feather';
+				imageMain.style = "position:relative";
+
 				var actualImage = document.createElement('div');
-				actualImage.style = `webkit-mask-image:-webkit-linear-gradient(to bottom, rgba(0,0,0,0) 0%, black 3%, black 97%, transparent 100%); overflow:hidden; max-height:${maxImageHeight}; `;
-				actualImage.innerHTML = "<img src='" + self.displayarticles[tidx].imageURL + "' width='100%' style='webkit-mask-image: -webkit-linear-gradient(to right, rgba(0, 0, 0, 0) 0%, black 3%, black 97%, transparent 100%);' />";
-				imageLink.appendChild(actualImage);
-				trext = trext + imageLink.outerHTML;
+				actualImage.className = 'crop';
+				actualImage.innerHTML = `<img class='img_feather imgstyle' src='${self.displayarticles[tidx].imageURL}' alt=''  />`;
+
+				imageMain.appendChild(actualImage);
+
+				var newarticleClass = "";
+
+				if (self.config.displayhilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.displayclearhilighttime) {
+					newarticleClass = " newarticle"; //hilight the title when it is a new feed
+				};
+
+				var allTextDiv = document.createElement('div');
+				allTextDiv.className = (self.config.displaytextbelowimage ? 'divtextbelowimg':'divtextoverimg') + " txtstyle";
+				
+				var titleDiv = document.createElement('div');
+				titleDiv.className = 'xsmall bright' + newarticleClass;
+				titleDiv.innerHTML = `${this.displayarticles[tidx].title}`;
+
+				if (self.config.displayarticledescription) {
+					titleDiv.innerHTML += `<br>${this.displayarticles[tidx].description}`
+				};
+
+				allTextDiv.appendChild(titleDiv);
+
+				var metaDiv = document.createElement('div');
+				metaDiv.className = 'xsmall bright subtext'
+				metaDiv.innerHTML = `${(self.config.displaysourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.displayarticleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
+
+				if (metaDiv.innerHTML != '') { allTextDiv.appendChild(metaDiv); } //dont add if empty
+
+				if (self.config.displaytextbelowimage) {
+						trext += imageMain.outerHTML;
+						trext += allTextDiv.outerHTML;
+				}
+				else {
+
+					imageMain.appendChild(allTextDiv);
+
+					trext += imageMain.outerHTML;
+                }
+
 			}
+			else  //format for text only feeds
 
-			newarticleclass = '';
+			{
+				var textcontainer = document.createElement("div");
+				textcontainer.style = "width:" + this.config.displaymodulewidth;
 
-			if (self.config.displayhilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) <  self.config.displayclearhilighttime) {
-				newarticleclass = ' class= "bright"'
-			};
+				if (self.config.displayhilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.displayclearhilighttime) {
+					altrowclassname = (altrowclassname == "altrow1" ? "newaltrow1" : "newaltrow2"); //hilight the title when it is a new feed
+				};
+				
+				var titleDiv = document.createElement("div");
+				titleDiv.className = "small maintext " + altrowclassname;
+				titleDiv.innerHTML = this.displayarticles[tidx].title;
+				if (self.config.displayarticledescription) {
+					titleDiv.innerHTML += `<br>${this.displayarticles[tidx].description}`
+				};
 
-			trext = trext + `<span ${newarticleclass}>${self.getStringTimeDifference(this.displayarticles[tidx].age)} - ` + ((self.config.displaysourcenamelength > 0) ? this.displayarticles[tidx].source : '') + ` - ${this.displayarticles[tidx].title}</span><br>`
+				textcontainer.appendChild(titleDiv);
 
-			if (self.config.displayarticledescription) {
-				trext = trext + `<span>${this.displayarticles[tidx].description}</span><br>`
-			};
+				var metadiv = document.createElement("div");
+				metadiv.className = 'xsmall subtext ' + altrowclassname;
+				metadiv.innerHTML = `${(self.config.displaysourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.displayarticleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
+				if (metadiv.innerHTML != '') {
+					textcontainer.appendChild(metadiv);
+				} //dont add if empty
+
+				if (altrowclassname == "newaltrow1") { //reverse the setting needs tidying up
+					altrowclassname = "altrow1"
+				}
+				else if (altrowclassname == "newaltrow2")
+				{
+					altrowclassname = "altrow2"
+				}
+
+				if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
+
+				trext += textcontainer.outerHTML;
+
+			}
 
 		}
 
-		this.config.text = trext + "</div>";
+		this.config.text = trext;
 
 	},
 
