@@ -24,7 +24,6 @@ Module.register("MMM-FeedDisplay", {
 		displayarticleage: false,			//adds the age of the article to the meta details line
 		displayarticletitle: true,
 		displayarticledescription: false,	//displays whatever is in the description feed as HTML
-		displaycleaneddescription: false,	//removes any html tags leaving just text
 		displayrotationstyle: 'default',	//how to rotate the list of articles on refresh cycle
 											//the refresh cycle is reset when new articles are made available
 											//default - display the next n articles, 
@@ -36,7 +35,10 @@ Module.register("MMM-FeedDisplay", {
 		displayhilightnewarticles: true,	//a never before shown feeds will be hilighted (all initially)
 		displayclearhilighttime: 5000,		//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
 		displaymodulewidth: "10vw",			//constrain the width to this // maybe should go into the css
-		displaytextbelowimage: false,		//eithe display the text for an image below it or over it
+		displaytextbelowimage: false,		//either display the text for an image below it or over it
+		displaytextlength: 0,				//truncate the title and description each to this length and add ... to show it is truncated
+											//default is 0 which means show all, control over showing the title and is elsewhere
+											//length constraint is applied after the text is cleaned if requested
 
 
 		//article ordered details, define how the aggregator returns the current list of articles
@@ -51,6 +53,8 @@ Module.register("MMM-FeedDisplay", {
 										// - we may want other options such as by provider or alphabetically title or most active feed
 		articleorder: 'ascending',		//options are ascending or descending, youngest first or oldest first
 		articlemaxcount: 20,			//the maximum number of articles in a feed ( this includes the merged one ) before there is clipping, clipping takes place after articles have been displayed at least once 
+		articlecleanedtext: false,		//removes any html tags and bad-words, leaving just text from title and description
+		articleignorecategorylist: [],  //checks for any categories matching full word those in this list i.e. ["horoscopes"]
 
 	},
 
@@ -287,6 +291,30 @@ Module.register("MMM-FeedDisplay", {
 		return wrapper;
 	},
 
+	trunctext: function (text, trunclength) {
+
+		if (text == null) { return ""; }
+
+		var textlength = text.length;
+		var textsuffix = "";
+
+		if (trunclength > 0) {
+			if (trunclength < textlength) {
+				textsuffix = "...";
+			};
+			textlength = trunclength - textsuffix.length;
+		}
+
+		return text.substring(0, textlength) + textsuffix;
+
+	},
+
+	colour: function (item, colour) {
+
+		return `<span style='color:${colour}'> ${item} </span>`;
+
+    },
+
 	buildwrapper: function () {
 
 		var self = this;
@@ -315,6 +343,11 @@ Module.register("MMM-FeedDisplay", {
 
 			tidx = aidx % this.totalarticlecount;
 
+			//we apply common processes here before hitting the image or text formatting
+
+			var temptitle = this.trunctext(this.displayarticles[tidx].title, self.config.displaytextlength)
+			var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.displaytextlength)
+
 			if (self.config.displayarticlimage && this.displayarticles[tidx].imageURL != null) { //just works for image only feeds initially
 
 				var imageMain = document.createElement('div');
@@ -338,10 +371,10 @@ Module.register("MMM-FeedDisplay", {
 				
 				var titleDiv = document.createElement('div');
 				titleDiv.className = 'xsmall bright' + newarticleClass;
-				titleDiv.innerHTML = `${this.displayarticles[tidx].title}`;
+				titleDiv.innerHTML = `${temptitle}`;
 
 				if (self.config.displayarticledescription) {
-					titleDiv.innerHTML += `<br>${this.displayarticles[tidx].description}`
+					titleDiv.innerHTML += `<br>${tempdescription}`
 				};
 
 				allTextDiv.appendChild(titleDiv);
@@ -376,9 +409,9 @@ Module.register("MMM-FeedDisplay", {
 				
 				var titleDiv = document.createElement("div");
 				titleDiv.className = "small maintext " + altrowclassname;
-				titleDiv.innerHTML = this.displayarticles[tidx].title;
+				titleDiv.innerHTML = temptitle;
 				if (self.config.displayarticledescription) {
-					titleDiv.innerHTML += `<br>${this.displayarticles[tidx].description}`
+					titleDiv.innerHTML += `<br>${tempdescription}`
 				};
 
 				textcontainer.appendChild(titleDiv);

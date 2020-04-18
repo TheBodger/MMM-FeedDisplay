@@ -4,12 +4,19 @@ var NodeHelper = require("node_helper");
 
 //global Var
 
+var isprofanity = require("isprofanity");
+
+var LOG = require('./LOG');
+
 module.exports = NodeHelper.create({
 
 	start: function () {
 
 		console.log(this.name + ' is started!');
 		this.consumerstorage = {}; // contains the config and feedstorage
+
+		this.currentmoduleinstance = '';
+		this.logger = {};
 
 	},
 
@@ -30,6 +37,22 @@ module.exports = NodeHelper.create({
 		this.alternatefeedorder = (this.consumerstorage[moduleinstance].config.articlemergetype.toLowerCase() == 'alternate'); // get an easier boolean to work with
 
 	},
+
+	categorymatch: function (categories, moduleinstance) {
+
+		//make sure the passed categories are converted to an array and to lower case before match against the config list
+
+		if (this.consumerstorage[moduleinstance].config.articleignorecategorylist.length == 0) { return false;}
+
+		var categoryarray = categories;
+
+		if (!Array.isArray(categories)) { categoryarray = [categories] };
+
+		categoryarray = categoryarray.map(v => v.toLowerCase())
+
+		return categoryarray.some(v => this.consumerstorage[moduleinstance].config.articleignorecategorylist.indexOf(v) != -1);
+
+    },
 
 	processfeeds: function (newfeeds) {
 
@@ -101,11 +124,21 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date(); // used for highlight checking
 
+				if (self.consumerstorage[moduleinstance].config.articlecleanedtext) {
+					article.title = self.cleanString(article.title);
+					article.description = self.cleanString(article.description);
+                }
+
 				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { //add the source data if requested
 					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
 				}
 
-				feedstorage.articles.push(article);
+				//check to see if we want to drop this article because of a category match
+
+				if (!self.categorymatch(article.categories, moduleinstance)) {
+
+					feedstorage.articles.push(article);
+				}
 
 			});
 
@@ -148,11 +181,20 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date();
 
+				if (self.consumerstorage[moduleinstance].config.articlecleanedtext) {
+					article.title = self.cleanString(article.title);
+					article.description = self.cleanString(article.description);
+				}
+
 				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { 
 					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
 				}
 
-				self.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles.push(article);
+				//check to see if we want to drop this article because of a category match
+
+				if (!self.categorymatch(article.categories, moduleinstance)) {
+					self.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles.push(article);
+				}
 
 			});
 
@@ -160,7 +202,7 @@ module.exports = NodeHelper.create({
 
 		}
 
-		//now create a payload in the correct order with multple titles if required
+		//now create a payload in the correct order with multpile titles if required
 
 		//feedstorage: {
 		//	'merged feed': {
@@ -170,7 +212,6 @@ module.exports = NodeHelper.create({
 		//		articles: [Array]
 		//	}
 		//}
-
 
 		//so we have received something new, so we send everything we have back to the consumer instance even if merged
 
@@ -266,26 +307,36 @@ module.exports = NodeHelper.create({
 
 			}
 
-        }
+		}
 
+		self.logger[self.currentmoduleinstance].info("In send articles: " + articles.length);
 
 		// all data is in correct order so we can send it
 
 		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { payload: { titles: titles, articles: articles } });
 
-		const braidArrays = (...arrays) => {
-			const braided = [];
-			for (let i = 0; i < Math.max(...arrays.map(a => a.length)); i++) {
-				arrays.forEach((array) => {
-					if (array[i] !== undefined) braided.push(array[i]);
-				});
-			}
-			return braided;
-		};
-
 	},
 
+	cleanString: function (theString) {
+		var self = this;
+		if (theString == null) { return theString };
+		
+		var cTextClean = theString;
+		cTextClean = cTextClean.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+		cTextClean = cTextClean.replace(/[^\x00-\x7F]/g, '');
+		cTextClean = cTextClean.replace(/\n/g, ' ');
+		cTextClean = cTextClean.replace(/\s+/g, ' ');
+		cTextClean = cTextClean.trim();
+		if (cTextClean.endsWith(':'))
+			cTextClean = cTextClean.substr(0, cTextClean.length - 1);
+		
+		//isprofanity(cTextClean, function (t,words) {
+		//	b = t ? 'contains' : 'does not contain';
+		//	self.logger[self.currentmoduleinstance].info("In cleanString : " + '"' + cTextClean + '" ' + b + ' profanity ' + JSON.stringify(words));
+		//}, 'node_modules/isprofanity/data/profanity.csv', 'node_modules/isprofanity/data/exceptions.csv', 0.8);
 
+		return cTextClean;
+	},
 
 	mergearticles: function (articlelist) {
 
@@ -336,6 +387,14 @@ module.exports = NodeHelper.create({
 
 		//we will receive a payload with the consumerid in it so we can store data and respond to the correct instance of
 		//the caller - i think that this may be possible!!
+
+		if (this.logger[payload.moduleinstance] == null) {
+
+			this.logger[payload.moduleinstance] = LOG.createLogger("logs/logfile_" + payload.moduleinstance + ".log", payload.moduleinstance);
+
+			this.currentmoduleinstance = payload.moduleinstance;
+
+		};
 
 		switch (notification) {
 			case "CONFIG": this.setconfig(payload); break;
