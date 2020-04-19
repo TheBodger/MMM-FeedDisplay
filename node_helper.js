@@ -6,11 +6,19 @@ var NodeHelper = require("node_helper");
 
 var isprofanity = require("isprofanity");
 
-var LOG = require('./LOG');
+//pseudo structures for commonality across all modules
+//obtained from a helper file of modules
+
+var LOG = require('../MMM-FeedUtilities/LOG');
+var RSS = require('../MMM-FeedUtilities/RSS');
+var QUEUE = require('../MMM-FeedUtilities/queueidea');
+var UTILITIES = require('../MMM-FeedUtilities/utilities');
 
 module.exports = NodeHelper.create({
 
 	start: function () {
+
+		this.debug = true;
 
 		console.log(this.name + ' is started!');
 		this.consumerstorage = {}; // contains the config and feedstorage
@@ -130,7 +138,7 @@ module.exports = NodeHelper.create({
                 }
 
 				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { //add the source data if requested
-					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
+					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
 				}
 
 				//check to see if we want to drop this article because of a category match
@@ -309,7 +317,7 @@ module.exports = NodeHelper.create({
 
 		}
 
-		self.logger[self.currentmoduleinstance].info("In send articles: " + articles.length);
+		if (self.debug) { self.logger[self.currentmoduleinstance].info("In send articles: " + articles.length); }
 
 		// all data is in correct order so we can send it
 
@@ -390,11 +398,11 @@ module.exports = NodeHelper.create({
 
 		if (this.logger[payload.moduleinstance] == null) {
 
-			this.logger[payload.moduleinstance] = LOG.createLogger("logs/logfile_" + payload.moduleinstance + ".log", payload.moduleinstance);
-
-			this.currentmoduleinstance = payload.moduleinstance;
+			this.logger[payload.moduleinstance] = LOG.createLogger("logfile_" + payload.moduleinstance + ".log", payload.moduleinstance);
 
 		};
+
+		this.currentmoduleinstance = payload.moduleinstance;
 
 		switch (notification) {
 			case "CONFIG": this.setconfig(payload); break;
