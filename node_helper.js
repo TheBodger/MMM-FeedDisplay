@@ -195,7 +195,7 @@ module.exports = NodeHelper.create({
 				}
 
 				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { 
-					article['source'] = payload.sourcetitle.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
+					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
 				}
 
 				//check to see if we want to drop this article because of a category match
