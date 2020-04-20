@@ -42,7 +42,7 @@ module.exports = NodeHelper.create({
 
 		this.consumerstorage[moduleinstance] = { config: config, feedstorage: {} };
 
-		this.alternatefeedorder = (this.consumerstorage[moduleinstance].config.articlemergetype.toLowerCase() == 'alternate'); // get an easier boolean to work with
+		this.alternatefeedorder = (this.consumerstorage[moduleinstance].config.article.mergetype.toLowerCase() == 'alternate'); // get an easier boolean to work with
 
 	},
 
@@ -50,7 +50,7 @@ module.exports = NodeHelper.create({
 
 		//make sure the passed categories are converted to an array and to lower case before match against the config list
 
-		if (this.consumerstorage[moduleinstance].config.articleignorecategorylist.length == 0) { return false;}
+		if (this.consumerstorage[moduleinstance].config.article.ignorecategorylist.length == 0) { return false;}
 
 		var categoryarray = categories;
 
@@ -58,7 +58,7 @@ module.exports = NodeHelper.create({
 
 		categoryarray = categoryarray.map(v => v.toLowerCase())
 
-		return categoryarray.some(v => this.consumerstorage[moduleinstance].config.articleignorecategorylist.indexOf(v) != -1);
+		return categoryarray.some(v => this.consumerstorage[moduleinstance].config.article.ignorecategorylist.indexOf(v) != -1);
 
     },
 
@@ -80,7 +80,7 @@ module.exports = NodeHelper.create({
 		//if we are keeping the feeds separate, then we will have to use the provided feed title as a key into the feedstorage
 		//otherwise we will use a key of "merged feed"
 
-		switch (this.consumerstorage[moduleinstance].config.articlemergetype.toLowerCase()) {
+		switch (this.consumerstorage[moduleinstance].config.article.mergetype.toLowerCase()) {
 			case 'merge':
 				var feedstorekey = 'merged feed';
 				break;
@@ -117,7 +117,7 @@ module.exports = NodeHelper.create({
 
 				//add each article and at the same time, depending on how we are sorting this build a key idx pair
 
-				switch (self.consumerstorage[moduleinstance].config.articleordertype.toLowerCase()) {
+				switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
 					case "default": //no sorting  but we need the corect indexes later
 						sortkey.idx = sortidx += 1;
 						sortkeys.push(sortkey);
@@ -132,13 +132,13 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date(); // used for highlight checking
 
-				if (self.consumerstorage[moduleinstance].config.articlecleanedtext) {
+				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
 					article.title = self.cleanString(article.title);
 					article.description = self.cleanString(article.description);
                 }
 
-				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { //add the source data if requested
-					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
+				if (self.consumerstorage[moduleinstance].config.display.sourcenamelength > 0) { //add the source data if requested
+					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.display.sourcenamelength);
 				}
 
 				//check to see if we want to drop this article because of a category match
@@ -174,7 +174,7 @@ module.exports = NodeHelper.create({
 
 				var sortkey = { key: 0, idx: 0 };
 
-				switch (self.consumerstorage[moduleinstance].config.articleordertype.toLowerCase()) {
+				switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
 					case "default": //no sorting but we need the indexes later
 						sortkey.idx = sortidx += 1;
 						self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
@@ -189,13 +189,13 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date();
 
-				if (self.consumerstorage[moduleinstance].config.articlecleanedtext) {
+				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
 					article.title = self.cleanString(article.title);
 					article.description = self.cleanString(article.description);
 				}
 
-				if (self.consumerstorage[moduleinstance].config.displaysourcenamelength > 0) { 
-					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.displaysourcenamelength);
+				if (self.consumerstorage[moduleinstance].config.display.sourcenamelength > 0) { 
+					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.display.sourcenamelength);
 				}
 
 				//check to see if we want to drop this article because of a category match
@@ -233,7 +233,7 @@ module.exports = NodeHelper.create({
 			//var titles = self.consumerstorage[moduleinstance].feedstorage[key].titles; //ignore for the time being
 			var sortkeys = self.consumerstorage[moduleinstance].feedstorage[key].sortkeys;
 			
-			switch (this.consumerstorage[moduleinstance].config.articleordertype.toLowerCase()) {
+			switch (this.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
 				case "default":
 					break;
 				case "date": ; //drop through to age as identical processing
@@ -243,7 +243,7 @@ module.exports = NodeHelper.create({
 
 					//here we use a simple numeric sort because it is age, will need alphabetic solution later
 
-					if (self.consumerstorage[moduleinstance].config.articleorder.toLowerCase() == 'descending') {
+					if (self.consumerstorage[moduleinstance].config.article.order.toLowerCase() == 'descending') {
 						sortkeys.sort(function (a, b) { return b.key - a.key });
 					}
 					else {

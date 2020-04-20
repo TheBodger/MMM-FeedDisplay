@@ -6,55 +6,70 @@ var feedDisplayPayload = { consumerid: '', providerid: '', payload: '' };
 
 Module.register("MMM-FeedDisplay", {
 
-
 	// Default module config.
+	// WARNING - added 2 layers of config, so make sure you have a display and an article section as parents to the settings
+	//in config.js
 
 	defaults: {
 
 		text: "... loading",
 		id: "MMFD1", // the unique id of this consumer
 
-		//article display details
+		//display details
 
-		displayrefreshtime: 5000,			//5000, refresh the displayed stuff every 5 seconds
-		displayfeedtitle: false,			//display whatever title(s) of the feed has been provided for a group of arcticles above the articles
-		displayarticlecount: 10,			//number of articles to display
-		displayarticlimage: false,			//if an image has been passed as a url, then include it, if missing dont (no nasty missing image /size)
-		displaysourcenamelength: 4,			//displays the 1st n characters of the source name before each item, good for merge and alternate
-		displayarticleage: false,			//adds the age of the article to the meta details line
-		displayarticletitle: true,
-		displayarticledescription: false,	//displays whatever is in the description feed as HTML
-		displayrotationstyle: 'default',	//how to rotate the list of articles on refresh cycle
-											//the refresh cycle is reset when new articles are made available
-											//default - display the next n articles, 
-											//scroll - move the articles up by 1 at each refresh
-		displayformatstyle: 'default',		//the format to use for whatever article options to display have been included
-											//default - mirror the tweeter format for no image
-											//default - mirror the instagram2020 format with an image
-		displaywraparticles: true,			//when the last article is appearing on the display, add articles from the start to fill any empty slots
-		displayhilightnewarticles: true,	//a never before shown feeds will be hilighted (all initially)
-		displayclearhilighttime: 5000,		//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
-		displaymodulewidth: "10vw",			//constrain the width to this // maybe should go into the css
-		displaytextbelowimage: false,		//either display the text for an image below it or over it
-		displaytextlength: 0,				//truncate the title and description each to this length and add ... to show it is truncated
-											//default is 0 which means show all, control over showing the title and is elsewhere
-											//length constraint is applied after the text is cleaned if requested
+		display: {
 
+			refreshtime: 5000,			//5000, refresh the displayed stuff every 5 seconds
+			feedtitle: false,			//display whatever title(s) of the feed has been provided for a group of arcticles above the articles
+			articlecount: 10,			//number of articles to display
+			articlimage: false,			//if an image has been passed as a url, then include it, if missing dont (no nasty missing image /size)
+			sourcenamelength: 4,		//displays the 1st n characters of the source name before each item, good for merge and alternate
+			articleage: false,			//adds the age of the article to the meta details line
+			articletitle: true,
+			articledescription: false,	//displays whatever is in the description feed as HTML
+			rotationstyle: 'default',	//how to rotate the list of articles on refresh cycle
+										//the refresh cycle is reset when new articles are made available
+										//default - display the next n articles, where n is the articlecount
+										//scroll - move the articles up by 1 at each refresh
+			formatstyle: 'default',		//the format to use for whatever article options to display have been included
+										//default - mirror the tweeter format for no image
+										//default - mirror the instagram2020 format with an image
+			wraparticles: true,			//when the last article is appearing on the display, add articles from the start to fill any empty slots
+			hilightnewarticles: true,	//a never before shown feeds will be hilighted (all initially)
+			clearhilighttime: 5000,		//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
+			modulewidth: "10vw",		//constrain the width to this // maybe should go into the css
+			textbelowimage: false,		//either display the text for an image below it or over it
+			textlength: 0,				//truncate the title and description each to this length and add ... to show it is truncated
+										//default is 0 which means show all, control over showing the title and is elsewhere
+										//length constraint is applied after the text is cleaned if requested
+	
+		},
+		article: {
 
-		//article ordered details, define how the aggregator returns the current list of articles
+			//article ordered details, define how the aggregator returns the current list of articles
 
-		articlemergetype: 'none',		// how to merge multiple feeds togther
-										// none - no merging
-										// merge - merge all feed details before applying the order type
-										// alternate - merge by taking alternate articles from each feed (i.e. 1st,1st,1st,2nd,2nd,2nd), will apply sort order before merging 
-		articleordertype: 'default',	//options are 
-										//	default - fifo grouped by the title as this is how they are recevied from the provider
-										//	date(same as age), age, - ascending or descending by how old they are
-										// - we may want other options such as by provider or alphabetically title or most active feed
-		articleorder: 'ascending',		//options are ascending or descending, youngest first or oldest first
-		articlemaxcount: 20,			//the maximum number of articles in a feed ( this includes the merged one ) before there is clipping, clipping takes place after articles have been displayed at least once 
-		articlecleanedtext: false,		//removes any html tags and bad-words, leaving just text from title and description
-		articleignorecategorylist: [],  //checks for any categories matching full word those in this list i.e. ["horoscopes"]
+			mergetype: 'none',		// how to merge multiple feeds togther
+									// none - no merging
+									// merge - merge all feed details before applying the order type
+									// alternate - merge by taking alternate articles from each feed (i.e. 1st,1st,1st,2nd,2nd,2nd), will apply sort order before merging 
+			ordertype: 'default',	//options are 
+									//	default - fifo grouped by the title as this is how they are recevied from the provider
+									//	date(same as age), age, - ascending or descending by how old they are
+									// - we may want other options such as by provider or alphabetically title or most active feed
+			order: 'ascending',		//options are ascending or descending, youngest first or oldest first
+			maxcount: 20,			//TODO the maximum number of articles in a feed ( this includes the merged one ) before there is clipping, clipping takes place after articles have been displayed at least once 
+			cleanedtext: false,		//removes any html tags and (TODO bad-words), leaving just text from title and description
+			ignorecategorylist: [],  //ignore articles matching any category, full word, in this list i.e. ["horoscopes"]
+
+		},
+
+	},
+
+	// we have to override the default setConfig as we will be merging a deep clone of .display and .article
+	setConfig: function (config) {
+		this.config = Object.assign({}, this.defaults, config);
+		if (config.display != null) { this.config.display = Object.assign({}, this.defaults.display, config.display); }
+		if (config.article != null) { this.config.article = Object.assign({}, this.defaults.article, config.article); }
 
 	},
 
@@ -264,10 +279,10 @@ Module.register("MMM-FeedDisplay", {
 
 			self.updateDom(); // speed in milliseconds
 
-			if (self.config.displayrotationstyle.toLowerCase() == 'default') {
-				self.displayarticleidx += self.config.displayarticlecount;
+			if (self.config.display.rotationstyle.toLowerCase() == 'default') {
+				self.displayarticleidx += self.config.display.articlecount;
 			}
-			else if (self.config.displayrotationstyle.toLowerCase() == 'scroll'){
+			else if (self.config.display.rotationstyle.toLowerCase() == 'scroll'){
 				self.displayarticleidx++;
 			}
 
@@ -279,7 +294,7 @@ Module.register("MMM-FeedDisplay", {
 
 			self.updateDom(150); // speed in milliseconds
 			
-		}, this.config.displayrefreshtime); //perform every ? milliseconds.
+		}, this.config.display.refreshtime); //perform every ? milliseconds.
 
 	},
 
@@ -327,7 +342,7 @@ Module.register("MMM-FeedDisplay", {
 
 		var aidx;
 
-		var endidx = this.config.displayarticlecount;
+		var endidx = this.config.display.articlecount;
 
 		//if wrapping, increase endidx so we always show a set of wrapped articles
 
@@ -345,10 +360,10 @@ Module.register("MMM-FeedDisplay", {
 
 			//we apply common processes here before hitting the image or text formatting
 
-			var temptitle = this.trunctext(this.displayarticles[tidx].title, self.config.displaytextlength)
-			var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.displaytextlength)
+			var temptitle = this.trunctext(this.displayarticles[tidx].title, self.config.display.textlength)
+			var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.display.textlength)
 
-			if (self.config.displayarticlimage && this.displayarticles[tidx].imageURL != null) { //just works for image only feeds initially
+			if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null) { //just works for image only feeds initially
 
 				var imageMain = document.createElement('div');
 				imageMain.className = 'div_feather';
@@ -362,18 +377,18 @@ Module.register("MMM-FeedDisplay", {
 
 				var newarticleClass = "";
 
-				if (self.config.displayhilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.displayclearhilighttime) {
+				if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
 					newarticleClass = " newarticle"; //hilight the title when it is a new feed
 				};
 
 				var allTextDiv = document.createElement('div');
-				allTextDiv.className = (self.config.displaytextbelowimage ? 'divtextbelowimg':'divtextoverimg') + " txtstyle";
+				allTextDiv.className = (self.config.display.textbelowimage ? 'divtextbelowimg':'divtextoverimg') + " txtstyle";
 				
 				var titleDiv = document.createElement('div');
 				titleDiv.className = 'xsmall bright' + newarticleClass;
 				titleDiv.innerHTML = `${temptitle}`;
 
-				if (self.config.displayarticledescription) {
+				if (self.config.display.articledescription) {
 					titleDiv.innerHTML += `<br>${tempdescription}`
 				};
 
@@ -381,11 +396,11 @@ Module.register("MMM-FeedDisplay", {
 
 				var metaDiv = document.createElement('div');
 				metaDiv.className = 'xsmall bright subtext'
-				metaDiv.innerHTML = `${(self.config.displaysourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.displayarticleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
+				metaDiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
 
 				if (metaDiv.innerHTML != '') { allTextDiv.appendChild(metaDiv); } //dont add if empty
 
-				if (self.config.displaytextbelowimage) {
+				if (self.config.display.textbelowimage) {
 						trext += imageMain.outerHTML;
 						trext += allTextDiv.outerHTML;
 				}
@@ -401,16 +416,16 @@ Module.register("MMM-FeedDisplay", {
 
 			{
 				var textcontainer = document.createElement("div");
-				textcontainer.style = "width:" + this.config.displaymodulewidth;
+				textcontainer.style = "width:" + this.config.display.modulewidth;
 
-				if (self.config.displayhilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.displayclearhilighttime) {
+				if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
 					altrowclassname = (altrowclassname == "altrow1" ? "newaltrow1" : "newaltrow2"); //hilight the title when it is a new feed
 				};
 				
 				var titleDiv = document.createElement("div");
 				titleDiv.className = "small maintext " + altrowclassname;
 				titleDiv.innerHTML = temptitle;
-				if (self.config.displayarticledescription) {
+				if (self.config.display.articledescription) {
 					titleDiv.innerHTML += `<br>${tempdescription}`
 				};
 
@@ -418,7 +433,7 @@ Module.register("MMM-FeedDisplay", {
 
 				var metadiv = document.createElement("div");
 				metadiv.className = 'xsmall subtext ' + altrowclassname;
-				metadiv.innerHTML = `${(self.config.displaysourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.displayarticleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
+				metadiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
 				if (metadiv.innerHTML != '') {
 					textcontainer.appendChild(metadiv);
 				} //dont add if empty
