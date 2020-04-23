@@ -19,29 +19,32 @@ Module.register("MMM-FeedDisplay", {
 
 		display: {
 
-			refreshtime: 5000,			//5000, refresh the displayed stuff every 5 seconds
-			feedtitle: false,			//display whatever title(s) of the feed has been provided for a group of arcticles above the articles
+			articleage: false,			//adds the formatted age of the article to the meta details line
 			articlecount: 10,			//number of articles to display
+			articledescription: false,	//show the article description 
+			articletitle: true,			//show the article title
 			articlimage: false,			//if an image has been passed as a url, then include it, if missing dont (no nasty missing image /size)
-			sourcenamelength: 4,		//displays the 1st n characters of the source name before each item, good for merge and alternate
-			articleage: false,			//adds the age of the article to the meta details line
-			articletitle: true,
-			articledescription: false,	//displays whatever is in the description feed as HTML
+			clearhilighttime: 10000,	//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
+			feedtitle: false,			//TODO display whatever title(s) of the feed has been provided for a group of arcticles above the articles
+			firstfulltext: false,		//the top most text only post contains all text
+			formatstyle: 'default',		//the format to use for whatever article options to display have been included
+										//default - mirror the tweeter format for no image
+										//default - mirror the instagram2020 format with an image
+										//TODO add alternative formats
+			hilightnewarticles: true,	//any never before shown feeds will be hilighted (all initially)
+			modulewidth: "10vw",		//constrain the width to this // maybe should go into the css
+			refreshtime: 5000,			//5000, refresh the displayed stuff every 5 seconds
 			rotationstyle: 'default',	//how to rotate the list of articles on refresh cycle
 										//the refresh cycle is reset when new articles are made available
 										//default - display the next n articles, where n is the articlecount
 										//scroll - move the articles up by 1 at each refresh
-			formatstyle: 'default',		//the format to use for whatever article options to display have been included
-										//default - mirror the tweeter format for no image
-										//default - mirror the instagram2020 format with an image
-			wraparticles: true,			//when the last article is appearing on the display, add articles from the start to fill any empty slots
-			hilightnewarticles: true,	//a never before shown feeds will be hilighted (all initially)
-			clearhilighttime: 5000,		//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
-			modulewidth: "10vw",		//constrain the width to this // maybe should go into the css
-			textbelowimage: false,		//either display the text for an image below it or over it
+			sourcenamelength: 4,		//displays the 1st n characters of the source name on the same line as the age of the item each item, good for merge and alternate
+			textbelowimage: true,		//either display the text for an image below it or over it if false
 			textlength: 0,				//truncate the title and description each to this length and add ... to show it is truncated
 										//default is 0 which means show all, control over showing the title and is elsewhere
 										//length constraint is applied after the text is cleaned if requested
+			wraparticles: false,		//wrap into / fill all display slots (articlecount) 
+
 	
 		},
 		article: {
@@ -55,11 +58,11 @@ Module.register("MMM-FeedDisplay", {
 			ordertype: 'default',	//options are 
 									//	default - fifo grouped by the title as this is how they are recevied from the provider
 									//	date(same as age), age, - ascending or descending by how old they are
-									// - we may want other options such as by provider or alphabetically title or most active feed
+									// TODO - we may want other options such as by provider or alphabetically title or most active feed
 			order: 'ascending',		//options are ascending or descending, youngest first or oldest first
 			maxcount: 20,			//TODO the maximum number of articles in a feed ( this includes the merged one ) before there is clipping, clipping takes place after articles have been displayed at least once 
 			cleanedtext: false,		//removes any html tags and (TODO bad-words), leaving just text from title and description
-			ignorecategorylist: [],  //ignore articles matching any category, full word, in this list i.e. ["horoscopes"]
+			ignorecategorylist: [], //ignore articles matching any category, full word, in this list i.e. ["horoscopes"]
 
 		},
 
@@ -194,24 +197,36 @@ Module.register("MMM-FeedDisplay", {
 	},
 
 	getStringTimeDifference: function (ageinmilliseconds) {
+		
 		var diffSecs = Math.round(ageinmilliseconds / 1000);
+
 		if (diffSecs < 60) { //seconds
 			return diffSecs + "s";
 		}
 		if (diffSecs < (60 * 60)) {//seconds * minutes
-			var diffMins = Math.round(diffSecs / 60);
+			var diffMins = Math.ceil(diffSecs / 60);
 			return diffMins + "m";
 		}
 		if (diffSecs < (60 * 60 * 24)) {//seconds * minutes * hours
-			var diffHours = Math.round(diffSecs / (60 * 60));
+			var diffHours = Math.ceil(diffSecs / (60 * 60));
 			return diffHours + "h";
 		}
 		if (diffSecs < (60 * 60 * 24 * 7)) {//seconds * minutes * hours * days
-			var diffDays = Math.round(diffSecs / (60 * 60 * 24));
+			var diffDays = Math.ceil(diffSecs / (60 * 60 * 24));
 			return diffDays + "d";
 		}
-		var diffWeeks = Math.round(diffSecs / (60 * 60 * 24 * 7));
-		return diffWeeks + "w";
+		if (diffSecs < (60 * 60 * 24 * 30 )) {//seconds * minutes * hours * days in week
+			var diffWeeks = Math.ceil(diffSecs / (60 * 60 * 24 * 30));
+			return diffWeeks + "w";
+		}
+		if (diffSecs < (60 * 60 * 24 * 365)) {//seconds * minutes * hours * days in year
+			var diffMonths = Math.ceil(diffSecs / (60 * 60 * 24 * 365));
+			return diffMonths + "m";
+		}
+		if (diffSecs >= (60 * 60 * 24 * 366)) {//seconds * minutes * hours * days in year
+			var diffYears = Math.ceil(diffSecs / (60 * 60 * 24 * 365));
+			return diffYears + "y";
+		}
 	},
 
 	//ALL_MODULES_STARTED - All modules are started.You can now send notifications to other modules.
@@ -286,7 +301,7 @@ Module.register("MMM-FeedDisplay", {
 				self.displayarticleidx++;
 			}
 
-			if (self.displayarticleidx > self.totalarticlecount) {
+			if (self.displayarticleidx > self.totalarticlecount - 1) {
 				self.displayarticleidx = 0;
 			}
 
@@ -345,8 +360,12 @@ Module.register("MMM-FeedDisplay", {
 		var endidx = this.config.display.articlecount;
 
 		//if wrapping, increase endidx so we always show a set of wrapped articles
-
-		endidx = endidx + this.displayarticleidx;
+		if (self.config.display.wraparticles) {
+			endidx = endidx + this.displayarticleidx;
+		}
+		else { //make sure we dont try and show non existing articles
+			endidx = Math.min(endidx, this.totalarticlecount);
+		}
 
 		var altrowclassname = "altrow1";
 
@@ -356,12 +375,19 @@ Module.register("MMM-FeedDisplay", {
 
 			//if wrapping 		//displaywraparticles: true,
 
-			tidx = aidx % this.totalarticlecount;
-
+			if (self.config.display.wraparticles) {
+				tidx = aidx % this.totalarticlecount;
+			}
 			//we apply common processes here before hitting the image or text formatting
 
-			var temptitle = this.trunctext(this.displayarticles[tidx].title, self.config.display.textlength)
-			var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.display.textlength)
+			if (self.config.display.firstfulltext && aidx == this.displayarticleidx) {
+				var temptitle = this.displayarticles[tidx].title;
+				var tempdescription = this.displayarticles[tidx].description;
+			}
+			else {
+				var temptitle = this.trunctext(this.displayarticles[tidx].title, self.config.display.textlength)
+				var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.display.textlength)
+			}
 
 			if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null) { //just works for image only feeds initially
 
@@ -396,7 +422,8 @@ Module.register("MMM-FeedDisplay", {
 
 				var metaDiv = document.createElement('div');
 				metaDiv.className = 'xsmall bright subtext'
-				metaDiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
+
+				metaDiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 
 				if (metaDiv.innerHTML != '') { allTextDiv.appendChild(metaDiv); } //dont add if empty
 
@@ -430,10 +457,9 @@ Module.register("MMM-FeedDisplay", {
 				};
 
 				textcontainer.appendChild(titleDiv);
-
 				var metadiv = document.createElement("div");
 				metadiv.className = 'xsmall subtext ' + altrowclassname;
-				metadiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age) : ''}`;
+				metadiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 				if (metadiv.innerHTML != '') {
 					textcontainer.appendChild(metadiv);
 				} //dont add if empty
