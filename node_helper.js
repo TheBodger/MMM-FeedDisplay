@@ -30,11 +30,6 @@ module.exports = NodeHelper.create({
 
 	setconfig: function (aconfig) {
 
-		//var consumerstorage = {};
-		//var config = {};
-		//var trackingfeeddates = []; //an array of last date of feed recevied, one for each feed in the feeds index, build from the config
-		//var aFeed = { lastFeedDate: '', feedURL: '' };
-
 		var moduleinstance = aconfig.moduleinstance;
 		var config = aconfig.config;
 
@@ -74,8 +69,8 @@ module.exports = NodeHelper.create({
 		//articlemergefeeds: false,		merge all feed details before applying the order type
 		//								alternate - merge by taking alternate articles from each feed(i.e. 1st, 1st, 1st, 2nd, 2nd, 2nd, 3rd, 3rd, 4th), 
 		//									will apply sort order before merging 
-		//articleordertype: 'default', //options are default, date(same as age), age,
-		//articleorder: 'ascending', //options are ascending or descending
+		//articleordertype: 'default',	//options are default, date(same as age), age,
+		//articleorder: 'ascending',	//options are ascending or descending
 
 		//if we are keeping the feeds separate, then we will have to use the provided feed title as a key into the feedstorage
 		//otherwise we will use a key of "merged feed"
@@ -101,13 +96,13 @@ module.exports = NodeHelper.create({
 
 		if (this.consumerstorage[moduleinstance].feedstorage[feedstorekey] == null) {
 
-			var sortkeys = []; // we only use it here, in the else we push direct to the main storage
-			var sortidx = -1; // we only use it here, in the else we use the one we store in main storage
+			var sortkeys = [];	// we only use it here, in the else we push direct to the main storage
+			var sortidx = -1;	// we only use it here, in the else we use the one we store in main storage
 
 			feedstorage.key = feedstorekey;
-			feedstorage.titles = [payload.title]; // add the first title we get, which will be many if this is a merged set of feeds
-			feedstorage.sourcetitles = [payload.sourcetitle]; // add the first sourcetitle we get, which will be many if this is a merged set of feeds
-			feedstorage.providers = [payload.providerid]; // add the first provider we get, whic will be many if there are multiple providers and merged
+			feedstorage.titles = [payload.title];				// add the first title we get, which will be many if this is a merged set of feeds
+			feedstorage.sourcetitles = [payload.sourcetitle];	// add the first sourcetitle we get, which will be many if this is a merged set of feeds
+			feedstorage.providers = [payload.providerid];		// add the first provider we get, whic will be many if there are multiple providers and merged
 
 			//we will have to handle tracking new articles here not in the main module
 

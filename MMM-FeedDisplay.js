@@ -187,7 +187,7 @@ Module.register("MMM-FeedDisplay", {
 
 				//send the data to the aggregator
 
-				//console.log(this.name + "  >>>>>> Sending data: " + payload.title + " " + payload.consumerid + " " + payload.providerid);
+				//console.log(payload);
 
 				this.sendNotificationToNodeHelper("AGGREGATE_THIS", { moduleinstance: self.identifier, payload :payload});
 
