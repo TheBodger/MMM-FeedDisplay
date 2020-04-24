@@ -58,6 +58,7 @@ Module.register("MMM-FeedDisplay", {
 			ordertype: 'default',	//options are 
 									//	default - fifo grouped by the title as this is how they are recevied from the provider
 									//	date(same as age), age, - ascending or descending by how old they are
+									//  TODO - sent - the timestamp the article was sent to the main module - to be used with clipping
 									// TODO - we may want other options such as by provider or alphabetically title or most active feed
 			order: 'ascending',		//options are ascending or descending, youngest first or oldest first
 			maxcount: 20,			//TODO the maximum number of articles in a feed ( this includes the merged one ) before there is clipping, clipping takes place after articles have been displayed at least once 
