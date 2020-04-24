@@ -59,9 +59,12 @@ Module.register("MMM-FeedDisplay", {
 									//	default - fifo grouped by the title as this is how they are recevied from the provider
 									//	date(same as age), age, - ascending or descending by how old they are
 									//  TODO - sent - the timestamp the article was sent to the main module - to be used with clipping
-									// TODO - we may want other options such as by provider or alphabetically title or most active feed
+									//  TODO - we may want other options such as by provider or alphabetically title or most active feed
 			order: 'ascending',		//options are ascending or descending, youngest first or oldest first
-			maxcount: 20,			//TODO the maximum number of articles in a feed ( this includes the merged one ) before there is clipping, clipping takes place after articles have been displayed at least once 
+			clipafter: 0,			//the maximum number of articles in a single feed (this includes the merged one) 
+									//	before there is clipping, 
+									//  clipping takes place after articles have been displayed at least once 
+									//  a value of 0 means no clipping
 			cleanedtext: false,		//removes any html tags and (TODO bad-words), leaving just text from title and description
 			ignorecategorylist: [], //ignore articles matching any category, full word, in this list i.e. ["horoscopes"]
 
@@ -390,7 +393,7 @@ Module.register("MMM-FeedDisplay", {
 				var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.display.textlength)
 			}
 
-			if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null) { //just works for image only feeds initially
+			if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null) { // for image  feeds 
 
 				var imageMain = document.createElement('div');
 				imageMain.className = 'div_feather';

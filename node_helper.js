@@ -108,6 +108,8 @@ module.exports = NodeHelper.create({
 
 			payload.payload.forEach(function (article) {
 
+				article['sentdate'] = new Date().getTime(); // used for highlight checking
+
 				var sortkey = { key: 0, idx: 0 };
 
 				//add each article and at the same time, depending on how we are sorting this build a key idx pair
@@ -123,9 +125,12 @@ module.exports = NodeHelper.create({
 						sortkey.idx = sortidx += 1;
 						sortkeys.push(sortkey);
 						break;
+					case "sent":
+						sortkey.key = article.sentdate;
+						sortkey.idx = sortidx += 1;
+						sortkeys.push(sortkey);
+						break;
 				}
-
-				article['sentdate'] = new Date(); // used for highlight checking
 
 				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
 					article.title = self.cleanString(article.title);
@@ -169,6 +174,8 @@ module.exports = NodeHelper.create({
 
 				var sortkey = { key: 0, idx: 0 };
 
+				article['sentdate'] = new Date().getTime();
+
 				switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
 					case "default": //no sorting but we need the indexes later
 						sortkey.idx = sortidx += 1;
@@ -180,9 +187,12 @@ module.exports = NodeHelper.create({
 						sortkey.idx = sortidx += 1;
 						self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
 						break;
+					case "sent":
+						sortkey.key = article.sentdate;
+						sortkey.idx = sortidx += 1;
+						self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
+						break;
 				}
-
-				article['sentdate'] = new Date();
 
 				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
 					article.title = self.cleanString(article.title);
@@ -231,12 +241,13 @@ module.exports = NodeHelper.create({
 			switch (this.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
 				case "default":
 					break;
-				case "date": ; //drop through to age as identical processing
-				case "age":
-					//sort the sort keys, and build a new payload of articles based on the reordered stuff
-					//as sorts are in place we need to copy the sort keys 
+				case "date": ; 
+				case "age":		//drop through to age as identical processing
+				case "sent":	//drop through to sent as well
+								//sort the sort keys, and build a new payload of articles based on the reordered stuff
+								//as sorts are in place we need to copy the sort keys 
 
-					//here we use a simple numeric sort because it is age, will need alphabetic solution later
+								//here we use a simple numeric sort because it is age, will need alphabetic solution later
 
 					if (self.consumerstorage[moduleinstance].config.article.order.toLowerCase() == 'descending') {
 						sortkeys.sort(function (a, b) { return b.key - a.key });
@@ -283,7 +294,7 @@ module.exports = NodeHelper.create({
 				feedkeys[feedkeyidx++] = key;
 			}
 
-			//2) iterate throgh the arrays to build a alternated set of data
+			//2) iterate through the arrays to build an alternated set of data
 			//		attempt every entry up to the largest one available
 			//		count the number of feeds currently stored using .length of the just stored array of feed keys
 			//		get an index at the feed level
@@ -317,6 +328,50 @@ module.exports = NodeHelper.create({
 		// all data is in correct order so we can send it
 
 		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { payload: { titles: titles, articles: articles } });
+
+
+		// ========================== clipping ====================================
+
+		//now we have sent all the latest articles, we can apply clipping if it is set
+
+		// we  process the  feed stores as cliiping as at this level (not combined level)
+
+		if (this.consumerstorage[moduleinstance].config.article.clipafter > 0 && self.consumerstorage[moduleinstance].feedstorage[key].articles.length > this.consumerstorage[moduleinstance].config.article.clipafter) {
+
+			//keep the first n articles, which need to be sorted into a decent order (use Sent order for random extract which ignores the other dates)
+
+			//the neccessary data is already in place, we just need to resort it, and then apply it to replace all the articles with a clopped list
+
+			for (var key in self.consumerstorage[moduleinstance].feedstorage) {
+
+				var sortkeys = self.consumerstorage[moduleinstance].feedstorage[key].sortkeys;
+
+				if (self.consumerstorage[moduleinstance].config.article.order.toLowerCase() == 'descending') {
+					sortkeys.sort(function (a, b) { return b.key - a.key });
+				}
+				else {
+					sortkeys.sort(function (a, b) { return a.key - b.key });
+				}
+
+			}
+
+			//build a temporary sorted list of articles
+			//and clear the sortkeys before rebuilding them from the new sorted list
+
+			articles = [];
+			self.consumerstorage[moduleinstance].feedstorage[key].sortkeys = [];
+			var sortkey = { key: 0, idx: 0 };
+
+			for (var idx = 0; idx < this.consumerstorage[moduleinstance].config.article.clipafter; idx++) {
+
+				articles.push(self.consumerstorage[moduleinstance].feedstorage[key].articles[sortkeys[idx].idx]);
+				self.consumerstorage[moduleinstance].feedstorage[key].sortkeys.push({ key: sortkeys[idx].key,idx:idx});
+
+			}
+
+			self.consumerstorage[moduleinstance].feedstorage[key].articles = articles;	//overwrite the articles store with the clipped one
+
+        }
 
 	},
 
