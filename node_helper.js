@@ -108,46 +108,46 @@ module.exports = NodeHelper.create({
 
 			payload.payload.forEach(function (article) {
 
-				article['sentdate'] = new Date().getTime(); // used for highlight checking
-
-				var sortkey = { key: 0, idx: 0 };
-
-				//add each article and at the same time, depending on how we are sorting this build a key idx pair
-
-				switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
-					case "default": //no sorting  but we need the corect indexes later
-						sortkey.idx = sortidx += 1;
-						sortkeys.push(sortkey);
-						break;
-					case "date": 
-						sortkey.key = article.pubdate;
-						sortkey.idx = sortidx += 1;
-						sortkeys.push(sortkey);
-						break;
-					case "age":
-						sortkey.key = article.age;
-						sortkey.idx = sortidx += 1;
-						sortkeys.push(sortkey);
-						break;
-					case "sent":
-						sortkey.key = article.sentdate;
-						sortkey.idx = sortidx += 1;
-						sortkeys.push(sortkey);
-						break;
-				}
-
-				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
-					article.title = self.cleanString(article.title);
-					article.description = self.cleanString(article.description);
-                }
-
-				if (self.consumerstorage[moduleinstance].config.display.sourcenamelength > 0) { //add the source data if requested
-					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.display.sourcenamelength);
-				}
-
 				//check to see if we want to drop this article because of a category match
 
-				if (!self.categorymatch(article.categories, moduleinstance)) {
+				if (!self.categorymatch(article.categories, moduleinstance)) { //dont do anything with this one if we dont want it
+
+					article['sentdate'] = new Date().getTime(); // used for highlight checking
+
+					var sortkey = { key: 0, idx: 0 };
+
+					//add each article and at the same time, depending on how we are sorting this build a key idx pair
+
+					switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
+						case "default": //no sorting  but we need the corect indexes later
+							sortkey.idx = sortidx += 1;
+							sortkeys.push(sortkey);
+							break;
+						case "date": 
+							sortkey.key = article.pubdate;
+							sortkey.idx = sortidx += 1;
+							sortkeys.push(sortkey);
+							break;
+						case "age":
+							sortkey.key = article.age;
+							sortkey.idx = sortidx += 1;
+							sortkeys.push(sortkey);
+							break;
+						case "sent":
+							sortkey.key = article.sentdate;
+							sortkey.idx = sortidx += 1;
+							sortkeys.push(sortkey);
+							break;
+					}
+
+					if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
+						article.title = self.cleanString(article.title);
+						article.description = self.cleanString(article.description);
+					}
+
+					if (self.consumerstorage[moduleinstance].config.display.sourcenamelength > 0) { //add the source data if requested
+						article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.display.sourcenamelength);
+					}
 
 					feedstorage.articles.push(article);
 				}
