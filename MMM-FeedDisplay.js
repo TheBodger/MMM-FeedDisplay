@@ -353,6 +353,10 @@ Module.register("MMM-FeedDisplay", {
 		//articles will have been sorted with the assumption that the youngest article will come in first and should appear at the top
 		//so we build as text = newarticle + text
 
+		if (this.totalarticlecount == 0) {
+			return '';
+		}
+
 		var self = this;
 
 		var trext = '';
