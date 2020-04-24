@@ -310,8 +310,6 @@ Module.register("MMM-FeedDisplay", {
 				self.displayarticleidx = 0;
 			}
 
-			self.buildwrapper();
-
 			self.updateDom(150); // speed in milliseconds
 			
 		}, this.config.display.refreshtime); //perform every ? milliseconds.
@@ -322,7 +320,7 @@ Module.register("MMM-FeedDisplay", {
 	getDom: function () {
 		Log.log(this.identifier + " Hello from getdom @" + this.showElapsed());
 		var wrapper = document.createElement("div");
-		wrapper.innerHTML = this.config.text;
+		wrapper.innerHTML = this.buildwrapper();
 		return wrapper;
 	},
 
@@ -351,6 +349,9 @@ Module.register("MMM-FeedDisplay", {
     },
 
 	buildwrapper: function () {
+
+		//articles will have been sorted with the assumption that the youngest article will come in first and should appear at the top
+		//so we build as text = newarticle + text
 
 		var self = this;
 
@@ -433,14 +434,14 @@ Module.register("MMM-FeedDisplay", {
 				if (metaDiv.innerHTML != '') { allTextDiv.appendChild(metaDiv); } //dont add if empty
 
 				if (self.config.display.textbelowimage) {
-						trext += imageMain.outerHTML;
-						trext += allTextDiv.outerHTML;
+						trext = imageMain.outerHTML + trext ;
+					trext = allTextDiv.outerHTML + trext ;
 				}
 				else {
 
 					imageMain.appendChild(allTextDiv);
 
-					trext += imageMain.outerHTML;
+					trext = imageMain.outerHTML + trext ;
                 }
 
 			}
@@ -479,13 +480,13 @@ Module.register("MMM-FeedDisplay", {
 
 				if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
 
-				trext += textcontainer.outerHTML;
+				trext = textcontainer.outerHTML + trext ;
 
 			}
 
 		}
 
-		this.config.text = trext;
+		return trext;
 
 	},
 
