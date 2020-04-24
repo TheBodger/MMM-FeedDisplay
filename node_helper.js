@@ -180,27 +180,23 @@ module.exports = NodeHelper.create({
 
 				article['sentdate'] = new Date().getTime();
 
+				sortkey.idx = sortidx += 1;
+
 				switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
 					case "default": //no sorting but we need the indexes later
-						sortkey.idx = sortidx += 1;
-						self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
 						break;
 					case "date":
 						sortkey.key = article.pubdate;
-						sortkey.idx = sortidx += 1;
-						sortkeys.push(sortkey);
 						break;
 					case "age":
 						sortkey.key = article.age;
-						sortkey.idx = sortidx += 1;
-						self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
 						break;
 					case "sent":
 						sortkey.key = article.sentdate;
-						sortkey.idx = sortidx += 1;
-						self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
 						break;
 				}
+
+				self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
 
 				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
 					article.title = self.cleanString(article.title);

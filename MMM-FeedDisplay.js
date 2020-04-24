@@ -434,14 +434,14 @@ Module.register("MMM-FeedDisplay", {
 				if (metaDiv.innerHTML != '') { allTextDiv.appendChild(metaDiv); } //dont add if empty
 
 				if (self.config.display.textbelowimage) {
-						trext = imageMain.outerHTML + trext ;
-					trext = allTextDiv.outerHTML + trext ;
+					trext += imageMain.outerHTML  ;
+					trext += allTextDiv.outerHTML  ;
 				}
 				else {
 
 					imageMain.appendChild(allTextDiv);
 
-					trext = imageMain.outerHTML + trext ;
+					trext += imageMain.outerHTML  ;
                 }
 
 			}
@@ -480,7 +480,7 @@ Module.register("MMM-FeedDisplay", {
 
 				if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
 
-				trext = textcontainer.outerHTML + trext ;
+				trext += textcontainer.outerHTML;
 
 			}
 
