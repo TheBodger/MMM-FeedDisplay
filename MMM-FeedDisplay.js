@@ -364,7 +364,7 @@ Module.register("MMM-FeedDisplay", {
 			endidx = endidx + this.displayarticleidx;
 		}
 		else { //make sure we dont try and show non existing articles
-			endidx = Math.min(endidx, this.totalarticlecount);
+			endidx = Math.min(endidx + this.displayarticleidx, this.totalarticlecount);
 		}
 
 		var altrowclassname = "altrow1";
