@@ -348,11 +348,13 @@ module.exports = NodeHelper.create({
 
 			//keep the first n articles, which need to be sorted into a decent order (use Sent order for random extract which ignores the other dates)
 
-			//the neccessary data is already in place, we just need to resort it, and then apply it to replace all the articles with a clopped list
+			//the neccessary data is already in place, we just need to resort it, and then apply it to replace all the articles with a clipped list
+			//and set the sortidx to point to the last entry we now have
 
 			for (var key in self.consumerstorage[moduleinstance].feedstorage) {
 
 				var sortkeys = self.consumerstorage[moduleinstance].feedstorage[key].sortkeys;
+				var articles = [];
 
 				if (self.consumerstorage[moduleinstance].config.article.order.toLowerCase() == 'descending') {
 					sortkeys.sort(function (a, b) { return b.key - a.key });
@@ -361,23 +363,24 @@ module.exports = NodeHelper.create({
 					sortkeys.sort(function (a, b) { return a.key - b.key });
 				}
 
+				//build a temporary sorted list of articles
+				//and clear the sortkeys before rebuilding them from the new sorted list
+
+				self.consumerstorage[moduleinstance].feedstorage[key].sortkeys = [];
+				var sortkey = { key: 0, idx: 0 };
+
+				for (var idx = 0; idx < this.consumerstorage[moduleinstance].config.article.clipafter; idx++) {
+
+					articles.push(self.consumerstorage[moduleinstance].feedstorage[key].articles[sortkeys[idx].idx]);
+
+					self.consumerstorage[moduleinstance].feedstorage[key].sortkeys.push({ key:sortkeys[idx].key,idx:idx});
+
+				}
+
+				self.consumerstorage[moduleinstance].feedstorage[key].articles = articles;	//overwrite the articles store with the clipped one
+				self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortidx = articles.length - 1; //set to point at the last item loaded
+
 			}
-
-			//build a temporary sorted list of articles
-			//and clear the sortkeys before rebuilding them from the new sorted list
-
-			articles = [];
-			self.consumerstorage[moduleinstance].feedstorage[key].sortkeys = [];
-			var sortkey = { key: 0, idx: 0 };
-
-			for (var idx = 0; idx < this.consumerstorage[moduleinstance].config.article.clipafter; idx++) {
-
-				articles.push(self.consumerstorage[moduleinstance].feedstorage[key].articles[sortkeys[idx].idx]);
-				self.consumerstorage[moduleinstance].feedstorage[key].sortkeys.push({ key: sortkeys[idx].key,idx:idx});
-
-			}
-
-			self.consumerstorage[moduleinstance].feedstorage[key].articles = articles;	//overwrite the articles store with the clipped one
 
         }
 
