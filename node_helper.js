@@ -174,47 +174,45 @@ module.exports = NodeHelper.create({
 
 			var sortidx = self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortidx; //make sure we reference the correct location in our output
 
+			//check to see if we want to drop this article because of a category match
+
 			payload.payload.forEach(function (article) {
 
-				var sortkey = { key: 0, idx: 0 };
-
-				article['sentdate'] = new Date().getTime();
-
-				sortkey.idx = sortidx += 1;
-
-				switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
-					case "default": //no sorting but we need the indexes later
-						break;
-					case "date":
-						sortkey.key = article.pubdate;
-						break;
-					case "age":
-						sortkey.key = article.age;
-						break;
-					case "sent":
-						sortkey.key = article.sentdate;
-						break;
-				}
-
-				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
-					article.title = self.cleanString(article.title);
-					article.description = self.cleanString(article.description);
-				}
-
-				if (self.consumerstorage[moduleinstance].config.display.sourcenamelength > 0) { 
-					article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.display.sourcenamelength);
-				}
-
-				//check to see if we want to drop this article because of a category match
-
 				if (!self.categorymatch(article.categories, moduleinstance)) {
+
+					var sortkey = { key: 0, idx: 0 };
+
+					article['sentdate'] = new Date().getTime();
+
+					sortkey.idx = sortidx += 1;
+
+					switch (self.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
+						case "default": //no sorting but we need the indexes later
+							break;
+						case "date":
+							sortkey.key = article.pubdate;
+							break;
+						case "age":
+							sortkey.key = article.age;
+							break;
+						case "sent":
+							sortkey.key = article.sentdate;
+							break;
+					}
+
+					if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
+						article.title = self.cleanString(article.title);
+						article.description = self.cleanString(article.description);
+					}
+
+					if (self.consumerstorage[moduleinstance].config.display.sourcenamelength > 0) {
+						article.source = article.source.substring(0, self.consumerstorage[moduleinstance].config.display.sourcenamelength);
+					}
+
 					self.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles.push(article);
 					self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
-				}
-				else {
-					//as we are dropping a display item, we need to adjust the sortidx
-					sortidx -= 1
-				}
+
+				};
 
 			});
 
