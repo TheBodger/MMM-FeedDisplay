@@ -196,8 +196,6 @@ module.exports = NodeHelper.create({
 						break;
 				}
 
-				self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
-
 				if (self.consumerstorage[moduleinstance].config.article.cleanedtext) {
 					article.title = self.cleanString(article.title);
 					article.description = self.cleanString(article.description);
@@ -211,6 +209,11 @@ module.exports = NodeHelper.create({
 
 				if (!self.categorymatch(article.categories, moduleinstance)) {
 					self.consumerstorage[moduleinstance].feedstorage[feedstorekey].articles.push(article);
+					self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
+				}
+				else {
+					//as we are dropping a display item, we need to adjust the sortidx
+					sortidx -= 1
 				}
 
 			});
