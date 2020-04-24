@@ -119,7 +119,11 @@ module.exports = NodeHelper.create({
 						sortkey.idx = sortidx += 1;
 						sortkeys.push(sortkey);
 						break;
-					case "date": ; //drop through to age as identical processing
+					case "date": 
+						sortkey.key = article.pubdate;
+						sortkey.idx = sortidx += 1;
+						sortkeys.push(sortkey);
+						break;
 					case "age":
 						sortkey.key = article.age;
 						sortkey.idx = sortidx += 1;
@@ -181,7 +185,11 @@ module.exports = NodeHelper.create({
 						sortkey.idx = sortidx += 1;
 						self.consumerstorage[moduleinstance].feedstorage[feedstorekey].sortkeys.push(sortkey);
 						break;
-					case "date": ; //drop through to age as identical processing
+					case "date":
+						sortkey.key = article.pubdate;
+						sortkey.idx = sortidx += 1;
+						sortkeys.push(sortkey);
+						break;
 					case "age":
 						sortkey.key = article.age;
 						sortkey.idx = sortidx += 1;
@@ -241,7 +249,7 @@ module.exports = NodeHelper.create({
 			switch (this.consumerstorage[moduleinstance].config.article.ordertype.toLowerCase()) {
 				case "default":
 					break;
-				case "date": ; 
+				case "date":  
 				case "age":		//drop through to age as identical processing
 				case "sent":	//drop through to sent as well
 								//sort the sort keys, and build a new payload of articles based on the reordered stuff
