@@ -90,7 +90,7 @@ module.exports = NodeHelper.create({
 		//assumption is that the provider will NOT send duplicate feeds so we just add them to the end before processing order commands
 		//the feedstorage will occur many times if there is no merging
 
-		var feedstorage = { key: '', sortidx: -1, titles: [], sourcetitles: [], providers: [], articles: [], sortkeys: [] };
+		var feedstorage = { key: '', sortidx: -1, titles: [], sourcetitles: [], providers: [], sourceiconclass: null, articles: [], sortkeys: [] };
 
 		//if not added create a new entry
 
@@ -103,6 +103,7 @@ module.exports = NodeHelper.create({
 			feedstorage.titles = [payload.title];				// add the first title we get, which will be many if this is a merged set of feeds
 			feedstorage.sourcetitles = [payload.sourcetitle];	// add the first sourcetitle we get, which will be many if this is a merged set of feeds
 			feedstorage.providers = [payload.providerid];		// add the first provider we get, whic will be many if there are multiple providers and merged
+			feedstorage.sourceiconclass = (payload.source != null) ? payload.source.sourceiconclass : null;
 
 			//we will have to handle tracking new articles here not in the main module
 
@@ -237,6 +238,7 @@ module.exports = NodeHelper.create({
 
 		var articles = [];
 		var titles = [];
+		var sourceiconclass = this.consumerstorage[moduleinstance].feedstorage[feedstorekey].sourceiconclass;
 
 		for (var key in self.consumerstorage[moduleinstance].feedstorage) {
 
@@ -332,14 +334,14 @@ module.exports = NodeHelper.create({
 
 		// all data is in correct order so we can send it
 
-		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { payload: { titles: titles, articles: articles } });
+		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { payload: { titles: titles, sourceiconclass: sourceiconclass, articles: articles } });
 
 
 		// ========================== clipping ====================================
 
 		//now we have sent all the latest articles, we can apply clipping if it is set
 
-		// we  process the  feed stores as cliiping as at this level (not combined level)
+		// we  process the  feed stores as cliping as at this level (not combined level)
 
 		if (this.consumerstorage[moduleinstance].config.article.clipafter > 0 && self.consumerstorage[moduleinstance].feedstorage[key].articles.length > this.consumerstorage[moduleinstance].config.article.clipafter) {
 
