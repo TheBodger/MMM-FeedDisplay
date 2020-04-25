@@ -110,7 +110,6 @@ Module.register("MMM-FeedDisplay", {
 		this.displayarticleidx = 0;		// the pointer into the list of articles that the next display cycle will start displaying from
 		this.totalarticlecount = 0;		// the total number of articles available for dispaying at the moment
 		this.displayarticles = [];		//{title: '', articles: []};  // all the actual articles available for display, grouped by the title
-		this.sourceiconclass = null;	//font awesome class name for the source provider
 
 		this.hilightarticletimer = new Date(); // used to wait a specifriced time before removing any hilights from new articles
 
@@ -261,8 +260,6 @@ Module.register("MMM-FeedDisplay", {
 			//here our aggregator tells us we have something to show, he is sending everything every time
 
 			this.displayarticles = payload.payload.articles;
-
-			this.sourceiconclass = payload.payload.sourceiconclass;
 
 			this.totalarticlecount = this.displayarticles.length;
 
@@ -430,7 +427,7 @@ Module.register("MMM-FeedDisplay", {
 				//add the source fontawesome Icon
 
 				titleDiv.className = 'xsmall bright' + newarticleClass;
-				titleDiv.innerHTML = ((this.sourceiconclass != null) ?  `<span class='${this.sourceiconclass}'></span>` : '') + `${temptitle}`;
+				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + `${temptitle}`;
 
 				if (self.config.display.articledescription) {
 					titleDiv.innerHTML += `<br>${tempdescription}`
@@ -471,7 +468,7 @@ Module.register("MMM-FeedDisplay", {
 				//add the source fontawesome Icon as well
 				titleDiv.className = "small maintext " + altrowclassname;
 
-				titleDiv.innerHTML = ((this.sourceiconclass != null) ?  `<span class='${this.sourceiconclass}'></span>` : '') + temptitle;
+				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
 				if (self.config.display.articledescription) {
 					titleDiv.innerHTML += `<br>${tempdescription}`
 				};

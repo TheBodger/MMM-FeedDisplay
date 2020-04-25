@@ -80,17 +80,18 @@ module.exports = NodeHelper.create({
 				var feedstorekey = 'merged feed';
 				break;
 			case 'alternate':
-				var feedstorekey = payload.title; // uses the same as for default, alternate merging happens after the sort
+				var feedstorekey = payload.source.title; // uses the same as for default, alternate merging happens after the sort
 				break;
 			default:
-				var feedstorekey = payload.title;
+				var feedstorekey = payload.source.title;
 		}
 
 		//now we add the provided feeds to the feedstorage
 		//assumption is that the provider will NOT send duplicate feeds so we just add them to the end before processing order commands
 		//the feedstorage will occur many times if there is no merging
+		//and because we are merging feeds here from different providers we need to move the sourceiconclass to the articles
 
-		var feedstorage = { key: '', sortidx: -1, titles: [], sourcetitles: [], providers: [], sourceiconclass: null, articles: [], sortkeys: [] };
+		var feedstorage = { key: '', sortidx: -1, titles: [], sourcetitles: [], providers: [], articles: [], sortkeys: [] };
 
 		//if not added create a new entry
 
@@ -103,7 +104,6 @@ module.exports = NodeHelper.create({
 			feedstorage.titles = [payload.title];				// add the first title we get, which will be many if this is a merged set of feeds
 			feedstorage.sourcetitles = [payload.sourcetitle];	// add the first sourcetitle we get, which will be many if this is a merged set of feeds
 			feedstorage.providers = [payload.providerid];		// add the first provider we get, whic will be many if there are multiple providers and merged
-			feedstorage.sourceiconclass = (payload.source != null) ? payload.source.sourceiconclass : null;
 
 			//we will have to handle tracking new articles here not in the main module
 
@@ -114,6 +114,7 @@ module.exports = NodeHelper.create({
 				if (!self.categorymatch(article.categories, moduleinstance)) { //dont do anything with this one if we dont want it
 
 					article['sentdate'] = new Date().getTime(); // used for highlight checking
+					article['sourceiconclass'] = (payload.source != null) ? payload.source.sourceiconclass : null;
 
 					var sortkey = { key: 0, idx: 0 };
 
@@ -184,6 +185,7 @@ module.exports = NodeHelper.create({
 					var sortkey = { key: 0, idx: 0 };
 
 					article['sentdate'] = new Date().getTime();
+					article['sourceiconclass'] = (payload.source != null) ? payload.source.sourceiconclass : null;
 
 					sortkey.idx = sortidx += 1;
 
@@ -334,7 +336,7 @@ module.exports = NodeHelper.create({
 
 		// all data is in correct order so we can send it
 
-		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { payload: { titles: titles, sourceiconclass: sourceiconclass, articles: articles } });
+		this.sendNotificationToMasterModule("NEW_FEEDS_" + moduleinstance, { payload: { titles: titles, articles: articles } });
 
 
 		// ========================== clipping ====================================
