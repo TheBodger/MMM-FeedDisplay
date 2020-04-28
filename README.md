@@ -42,7 +42,7 @@ To install the module, use your terminal to:
 
 ## Using the module
 
-### MagicMirror² Configuration
+### MagicMirrorÂ² Configuration
 
 To use this module, add the following configuration block to the modules array in the `config/config.js` file:
 ```js
@@ -209,7 +209,7 @@ MVP
 	wraps the payload with the consumer ID and a message to notify the main display module of new data availability
 	responds to a request for all data from its linked display module ID TODO
 	will handle data filtering based on the config (i.e. in Twitter we can ignore retweets)
->/pre>
+</pre>
 
 #### Finally - creating new providers
 
