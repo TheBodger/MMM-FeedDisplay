@@ -23,6 +23,12 @@ To enable this there are 5 Provider modules:
 4) Reddit
 5) Instagram
 
+# Table of Contents
+
+1. [My first title](#my-first-title)
+2. [My second title](#my-second-title)
+
+
 ### Dependencies
 
 Before installing this module, use https://github.com/TheBodger/MMM-FeedUtilities to setup the MMM-Feed... dependencies and  install all modules 
@@ -234,7 +240,9 @@ P.s. let me know if you actually create a new provider using a new pull request.
 
 
 
-
+## My first title
+Some text.
+## My second title
 
 
 
