@@ -32,7 +32,8 @@ To enable this there are 5 Provider modules:
 2. [Additional Notes](#Additional_Notes)
 2. [Detailed Article config options](#Detailed_Article_config_options)
 2. [MMM-Feedxxx overview](#MMM-Feedxxx_overview)
-2. [reating new providers](#Creating_new_providers)
+2. [Thoughts on the design](#thoughts_on_design)
+2. [Creating new providers](#Creating_new_providers)
 
 ### Dependencies
 
