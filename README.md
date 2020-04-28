@@ -90,7 +90,7 @@ To use this module, add the following configuration block to the modules array i
 | `ignorecategorylist`                | *Optional* - an array of categories that if found in a post will stop it from being displayed. See example above for usage<br><br> **Possible values:** an array of categories.<br> **Default value:** empty array
 | `display`            |*optional* - contains all the config options applied during the displaying of the aggregated feed articles
 | `articleage`                | *Optional* - show formatted article age on a separate meta data line, may include the sourcename<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
-| `artarticledescriptionicleage`                | *Optional* - show article description <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
+| `artarticledescription`                | *Optional* - show article description <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `articletitle`                | *Optional* - show article title <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `true`
 | `articlimage`                | *Optional* - show article image if provided<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `articlecount`                | *Optional* - how many articles to show on the magic mirror<br><br> **Possible values:** any number.<br> **Default value:** `10`
