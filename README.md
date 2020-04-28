@@ -215,17 +215,19 @@ MVP
 
 With the existing providers, there are different ways of obtaining and formatting data into the standard format required by the MMM-FeedDisplay module, look at each to determine if any match your specific requirement. Also most use a helper of some kind that already exists in nodejs. so it is worth searching there as well.
 
-To create a new provide consider the following:
+To create a new provider consider the following:
 
-copy any of the existing GIThub repositories with all the provider modules: main module and node_helper.
+copy any of the existing GitHub provider repositories with all the files: main module and node_helper, etc
 rename it externally and internally so it has a meaningful name
 the main module should need few if any changes
-the node_helper is where most of the work is done, with the new processing within the `fetchfeed` section. all other sections should be ok as they are. One day i may actually create a default module and have the provider added as an extension to the default module.
-because the data in the title and description are displayed in what is in essence a browser, any valid HTML that is allowed within the body of a page will be honoured. This means that the provider could actually format the display area and just have the FeedDisplay act as a pass through to the magic mirror display. By using clipping of 1, and ensuring each update to the feed from the provider has a current time stamp, it should be possible to have the provider act as a near real time updater of data to a single display location on the display. An example of where this might be useful is in formatting share details into a table for example. I may give this a go soon.
+the node_helper is where most of the work is done, with the new processing within the `fetchfeed` section. all other sections should be ok as they are. But there may be the odd tweak here and there. if you find yourself changing acres of code, then you are probably best building a module outside of this pattern.
+one day i may actually create a default module and have the provider added as an extension to the default module.
+because the data in the title and description variables are displayed in what is in essence a browser, any valid HTML that is allowed within the body of a webpage will be honoured. This means that the provider could actually format the display area and just have the FeedDisplay act as a pass through to the magic mirror display. 
+By using clipping of 1, and ensuring each update to the feed from the provider has a current time stamp, it should be possible to have the provider act as a near real time updater of data to a single display location on the display. An example of where this might be useful is in formatting share details into a table for example. I may give this a go soon.
 when completed, use the readme.md from any of the providers as it has a relatively readable format, and much of it is reusable.
 test test test, and finally publish to GIT with all the relevant information updated in all the files
 best of luck and thanks if you actually read to this point
-
+P.s. let me know if you actually create a new provider using a new pull request.
 ##the end
 
 
