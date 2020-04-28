@@ -108,9 +108,16 @@ To use this module, add the following configuration block to the modules array i
 
 ### Additional Notes
 
-there are some options in the code marked as TODO. ignore these.
+There are some options in the code marked as TODO. ignore these.
 
-#### Article config options:
+Because the config is multilayered (config, then article and display - additioanl code is need to ensure that the entire config is merged with the defautls and passed to the ndoe_helper)
+
+The IDs must match between providers and consumers. Being a case sensitive environment extra care is needed here.
+
+The alternate method of merhing articles from disparate feeds requires that each feed must be provided with a unique title in the RSSSource area of the payload
+
+
+#### Detailed Article config options:
 
 mergetype: 'none',		// how to merge multiple feeds togther
 						// none - no merging
@@ -137,10 +144,9 @@ Additional display options and article options are being added all the time.
 
 This is a WIP; changes are being made all the time to improve the compatability across the modules. Please refresh this and the MMM-feedUtilities modules with a `git pull` in the relevant modules folders.
 
-
 #MMM-Feedxxx overview
 
-neil's consumer provider consumer aggregator user model
+Neil's consumer provider consumer aggregator user model.
 
 Each consumer has a unique id. Each provider is told in the config which consumers to provide to. Each provider may be given multiple consumer ids and each Consumer may have multiple providers.
 
@@ -194,6 +200,7 @@ MVP
 		order data by published or as it arrives or simply interleave by actual provider and or source (lots of options!)
 	pass all data backto main module
 3) provider module
+	does not display anything and so is hidden on the MM display by having no position in the config.
 	config (includes display module ID to send messages to)
 	schedules refresh of getting data from its own source list (this is now known as feeds)
 	does all the funky get data stuff - use a node helper - (subsequently this minimise the changes between the various duplicated modules)
@@ -201,6 +208,24 @@ MVP
 	wraps the payload with the consumer ID and a message to notify the main display module of new data availability
 	responds to a request for all data from its linked display module ID TODO
 	will handle data filtering based on the config (i.e. in Twitter we can ignore retweets)
+
+#### Finally - creating new providers
+
+With the existing providers, there are different ways of obtaining and formatting data into the standard format required by the MMM-FeedDisplay module, look at each to determine if any match your specific requirement. Also most use a helper of some kind that already exists in nodejs. so it is worth searching there as well.
+
+To create a new provide consider the following:
+
+copy any of the existing GIThub repoitories with all the provider modules: main module and node_helper.
+rename it externally and internally so it has a meaningfull name
+the main module should need few if any changes
+the node_helper is where most of the work is done, with the new processing within the fetchfeed section. all other sections should be ok as they are. One day i may actually create a default module and have the provider added as an extension to the default module.
+because the data in the title and description are displayed in what is in essence a browser, any valid HTML that is allowed within the body of a page will be honoured. This means that the provider could actually format the display area and just have the FeedDisplay act as a pass through to the magic mirror display. By using clipping of 1, and ensuring each update to the feed from the provider has a current timestamp, it shoudl be possible to have the provider act as a near real time updater of data to a single display location on the display. An example of where this might be useful is in formatting share details into a table for example. I may give this a go soon.
+when completed, use the readme.md from any of the providers as it has a relatively readable format, and much of it is reusable.
+test test test, and finally publish to GIT with all the relevant information updated in all the files
+best of luck and thanks if you actually read to this point
+
+##the end
+
 
 
 
