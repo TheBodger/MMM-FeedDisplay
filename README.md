@@ -88,7 +88,6 @@ To use this module, add the following configuration block to the modules array i
 | `clipafter`                | *Optional* - After new feeds have been aggregated and sent for dispaly, if this number is > 0 then only this number of latest feeds are retained<br><br> **Possible values:** `0`,any number.<br> **Default value:** `0`
 | `cleanedtext`                | *Optional* - All HTML tags and contents are removed. Will use isprofanity in future<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `ignorecategorylist`                | *Optional* - an array of categories that if found in a post will stop it from being displayed. See example above for usage<br><br> **Possible values:** an array of categories.<br> **Default value:** empty array
-
 | `display`            |*optional* - contains all the config options applied during the displaying of the aggregated feed articles
 | `articleage`                | *Optional* - show formatted article age on a separate meta data line, may include the sourcename<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `artarticledescriptionicleage`                | *Optional* - show article description <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
