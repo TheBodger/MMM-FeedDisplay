@@ -117,7 +117,7 @@ The alternate method of merhing articles from disparate feeds requires that each
 
 
 #### Detailed Article config options:
-
+<pre>
 mergetype: 'none',		// how to merge multiple feeds togther<BR>
 						// none - no merging<BR>
 						// merge - merge all feed details before applying the order type<BR>
@@ -135,7 +135,7 @@ clipafter: 0,			//the maximum number of articles in a single feed (this includes
 						//  clipping takes place after articles have been displayed at least once <BR>
 						//  a value of 0 means no clipping<BR>
 cleanedtext: false,		//removes any html tags and (TODO bad-words), leaving just text from title and description<BR>
-ignorecategorylist: [], //ignore articles matching any category, full word, in this list i.e. ["horoscopes"]<BR>
+ignorecategorylist: [], //ignore articles matching any category, full word, in this list i.e. ["horoscopes"]<BR></pre>
 
 #### Display config options:
 
