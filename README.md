@@ -25,8 +25,17 @@ To enable this there are 5 Provider modules:
 
 # Table of Contents
 
-1. [My first title](#my-first-title)
-2. [My second title](#my-second-title)
+1. [Dependencies](#Dependencies)
+2. [Installation](#Installation)
+2. [Using the module](#Using the module)
+2. [Configuration Options](#Configuration Options)
+2. [Additional Notes](#Additional Notes)
+2. [Detailed Article config options](#Detailed Article config options)
+2. [MMM-Feedxxx overview](#MMM-Feedxxx overview)
+2. [reating new providers](#reating new providers)
+2. [Installation](#Installation)
+2. [Installation](#Installation)
+2. [Installation](#Installation)
 
 
 ### Dependencies
@@ -236,13 +245,3 @@ best of luck and thanks if you actually read to this point
 P.s. let me know if you actually create a new provider using a new pull request.
 
 ## the end
-
-
-
-
-## My first title
-Some text.
-## My second title
-
-
-
