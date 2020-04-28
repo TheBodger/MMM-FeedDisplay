@@ -27,7 +27,7 @@ To enable this there are 5 Provider modules:
 
 1. [Dependencies](#Dependencies)
 2. [Installation](#Installation)
-2. [Using the module](#Using the module)
+2. [Using the module](#Using_the_module)
 2. [Configuration Options](#Configuration Options)
 2. [Additional Notes](#Additional Notes)
 2. [Detailed Article config options](#Detailed Article config options)
@@ -55,7 +55,7 @@ To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
 2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-FeedDisplay`
 
-## Using the module
+## Using_the_module
 
 ### MagicMirror² Configuration
 
