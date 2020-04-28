@@ -28,15 +28,11 @@ To enable this there are 5 Provider modules:
 1. [Dependencies](#Dependencies)
 2. [Installation](#Installation)
 2. [Using the module](#Using_the_module)
-2. [Configuration Options](#Configuration Options)
-2. [Additional Notes](#Additional Notes)
-2. [Detailed Article config options](#Detailed Article config options)
-2. [MMM-Feedxxx overview](#MMM-Feedxxx overview)
-2. [reating new providers](#reating new providers)
-2. [Installation](#Installation)
-2. [Installation](#Installation)
-2. [Installation](#Installation)
-
+2. [Configuration Options](#Configuration_Options)
+2. [Additional Notes](#Additional_Notes)
+2. [Detailed Article config options](#Detailed_Article_config_options)
+2. [MMM-Feedxxx overview](#MMM-Feedxxx_overview)
+2. [reating new providers](#Creating_new_providers)
 
 ### Dependencies
 
@@ -90,7 +86,7 @@ To use this module, add the following configuration block to the modules array i
 
 ```
 
-### Configuration Options
+### Configuration_Options
 
 | Option                  | Details
 |------------------------ |--------------
@@ -120,7 +116,7 @@ To use this module, add the following configuration block to the modules array i
 | `textlength`                | *Optional* - the number of characters of the title and description to show if they are to be displayed. 0 means no truncation. Applied after text is cleaned<br><br> **Possible values:**`0`, any number of characters<br> **Default value:** `0` - no truncation		
 | `wraparticles`                | *Optional* - ensure all the articlecount article slots are filled. Otherwise articles are scrolled until the last one is only visible,<br><br> **Possible values:**  `true`,`false`.<br> **Default value:** `false`
 
-### Additional Notes
+### Additional_Notes
 
 There are some options in the code marked as TODO. ignore these.
 
@@ -158,7 +154,7 @@ Additional display options and article options are being added all the time.
 
 This is a WIP; changes are being made all the time to improve the compatibility across the modules. Please refresh this and the MMM-feedUtilities modules with a `git pull` in the relevant modules folders.
 
-## MMM-Feedxxx overview
+## MMM-Feedxxx_overview
 
 Neil's consumer provider consumer aggregation user model.
 
@@ -188,7 +184,7 @@ The display cycle in the main module is restarted each time new articles are pro
 
 To maximise seeing all feeds returned from each provider collection cycle, tune the display cycle time and the data refresh time.
 
-#### thoughts on design
+#### thoughts_on_design
 
 The objective was to create multiple providers specialised in a particular data type, be it say share prices, car sales, twitter feeds or top albums, that would provide the data collected in a common format so that only one display routine would be required. This would enable easy merging of disparate data into a single area on the magic mirror without complex carousel type configs.
 
@@ -226,7 +222,7 @@ MVP
 	will handle data filtering based on the config (i.e. in Twitter we can ignore retweets)
 </pre>
 
-#### Finally - creating new providers
+#### Creating_new_providers
 
 With the existing providers, there are different ways of obtaining and formatting data into the standard format required by the MMM-FeedDisplay module, look at each to determine if any match your specific requirement. Also most use a helper of some kind that already exists in nodejs. so it is worth searching there as well.
 
