@@ -1,4 +1,11 @@
-//\MMM-MMM-FeedDisplay.js
+/* global Module, MMM-FeedDisplay */
+
+/* Magic Mirror
+ * Module: MMM-FeedDisplay
+ *
+ * By Neil Scott
+ * MIT Licensed.
+ */
 
 var startTime = new Date(); //use for getting elapsed times during debugging
 

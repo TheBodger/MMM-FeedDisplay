@@ -1,3 +1,12 @@
+/* global Module, MMM-FeedDisplay */
+
+/* Magic Mirror
+ * Module: node_helper
+ *
+ * By Neil Scott
+ * MIT Licensed.
+ */
+
 var NodeHelper = require("node_helper");
 
 //this.name String The name of the module
