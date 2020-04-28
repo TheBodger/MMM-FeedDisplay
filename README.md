@@ -124,16 +124,16 @@ mergetype: 'none',		// how to merge multiple feeds togther
 					// alternate - merge by taking alternate articles from each feed (i.e. 1st,1st,1st,2nd,2nd,2nd), will apply sort order before merging 
 					//				to work correctly, feeds being provided must have a unique feedtitle.
 ordertype: 'default',		//options are 
-					//	default - fifo grouped by the title as this is how they are recevied from the provider
-					//	date, - larger numbers are younger so sort descending
-					//  age, - smaller number are younger so sort ascending
-					//  sent, - the date/timestamp the article was sent to the main module - to be used with clipping - sort descending for youngest at top
-					//  TODO - we may want other options such as by provider or alphabetically title or most active feed
+					// default - fifo grouped by the title as this is how they are recevied from the provider
+					// date, - larger numbers are younger so sort descending
+					// age, - smaller number are younger so sort ascending
+					// sent, - the date/timestamp the article was sent to the main module - to be used with clipping - sort descending for youngest at top
+					// TODO - we may want other options such as by provider or alphabetically title or most active feed
 order: 'ascending',		//options are ascending or descending, so dates (As date/sent youngest at the top = descending, for age, ascending for top )
 clipafter: 0,			//the maximum number of articles in a single feed (this includes the merged one) 
-					//	before there is clipping, 
-					//  clipping takes place after articles have been displayed at least once 
-					//  a value of 0 means no clipping
+					// before there is clipping, 
+					// clipping takes place after articles have been displayed at least once 
+					// a value of 0 means no clipping
 cleanedtext: false,		//removes any html tags and (TODO bad-words), leaving just text from title and description
 ignorecategorylist: [],		//ignore articles matching any category, full word, in this list i.e. ["horoscopes"]</pre>
 
