@@ -46,19 +46,19 @@
 }
 
 .altrow1 {
-    color: rgb(180, 180, 180);
+    color: rgb(200, 200, 200);
 }
 
 .newaltrow1 {
-    color: rgb(180, 180, 0);
+    color: rgb(200, 200, 0);
 }
 
 .altrow2 {
-    color: rgb(220, 220, 220);
+    color: rgb(225, 225, 225);
 }
 
 .newaltrow2 {
-    color: rgb(220, 220, 0 );
+    color: rgb(225, 225, 0 );
 }
 
 .maintext {
@@ -84,3 +84,15 @@
 }
 
 
+/* over ride the default brightness*/
+.dimmed {
+    filter: brightness(0.60);
+}
+
+.normal {
+    filter: brightness(0.80)
+}
+
+.bright {
+    filter: brightness(1.00)
+}
