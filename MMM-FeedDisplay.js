@@ -442,25 +442,20 @@ Module.register("MMM-FeedDisplay", {
 				};
 
 				var metaSpan = document.createElement('span');
-				metaSpan.className = 'xsmall bright subtext'
-				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+				metaSpan.className = 'xsmall bright subtext' + newarticleClass;
+				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
 
 				allTextDiv.appendChild(titleDiv);
 
-				var metaSpan = document.createElement('span');
-				metaSpan.className = 'xsmall bright subtext'
-				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
-				if (metaSpan.innerHTML != '') { allTextDiv.appendChild(metaSpan); } //dont add if empty
-
 				if (self.config.display.textbelowimage) {
+
 					trext += imageMain.outerHTML  ;
 					trext += allTextDiv.outerHTML  ;
 				}
 				else {
 
 					imageMain.appendChild(allTextDiv);
-
 					trext += imageMain.outerHTML  ;
                 }
 
@@ -470,8 +465,6 @@ Module.register("MMM-FeedDisplay", {
 			{
 				var textcontainer = document.createElement("div");
 				textcontainer.style = "width:" + this.config.display.modulewidth;
-
-				//(altrowclassname == "altrow1" ? "newaltrow1" : "newaltrow2");
 
 				if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
 					hilightclassname = " newarticle "  //hilight the title when it is a new feed
@@ -483,17 +476,16 @@ Module.register("MMM-FeedDisplay", {
 
 				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
 				if (self.config.display.articledescription) {
-					titleDiv.innerHTML += `<br><span class="light small desctext ${hilightclassname}  ${altrowclassname}">${tempdescription}</span>`
+					titleDiv.innerHTML += `<br><span class="light small desctext ${hilightclassname} ${altrowclassname}">${tempdescription}</span>`
 				};
 
-				textcontainer.appendChild(titleDiv);
-				var metadiv = document.createElement("div");
-				metadiv.className = 'xsmall subtext ' + hilightclassname + altrowclassname;
-				metadiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
-				if (metadiv.innerHTML != '') {
-					textcontainer.appendChild(metadiv);
-				} //dont add if empty
+				var metaSpan = document.createElement('span');
+				metaSpan.className = 'xsmall bright subtext' + hilightclassname + altrowclassname;
+				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
 
+				textcontainer.appendChild(titleDiv);
+				
 				if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
 
 				trext += textcontainer.outerHTML;
