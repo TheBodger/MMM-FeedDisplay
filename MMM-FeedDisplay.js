@@ -306,7 +306,7 @@ Module.register("MMM-FeedDisplay", {
 
 			self.buildwrapper();
 
-			self.updateDom(); // speed in milliseconds
+			self.updateDom(1500); // speed in milliseconds
 
 			if (self.config.display.rotationstyle.toLowerCase() == 'default') {
 				self.displayarticleidx += self.config.display.articlecount;
@@ -482,7 +482,7 @@ Module.register("MMM-FeedDisplay", {
 
 				textcontainer.appendChild(titleDiv);
 				var metadiv = document.createElement("div");
-				metadiv.className = 'dimmed xsmall subtext ' + altrowclassname;
+				metadiv.className = 'normal xsmall subtext ' + altrowclassname;
 				metadiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 				if (metadiv.innerHTML != '') {
 					textcontainer.appendChild(metadiv);
