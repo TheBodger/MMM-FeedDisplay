@@ -397,24 +397,8 @@ module.exports = NodeHelper.create({
 	},
 
 	cleanString: function (theString) {
-		var self = this;
-		if (theString == null) { return theString };
-		
-		var cTextClean = theString;
-		cTextClean = cTextClean.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
-		cTextClean = cTextClean.replace(/[^\x00-\x7F]/g, '');
-		cTextClean = cTextClean.replace(/\n/g, ' ');
-		cTextClean = cTextClean.replace(/\s+/g, ' ');
-		cTextClean = cTextClean.trim();
-		if (cTextClean.endsWith(':'))
-			cTextClean = cTextClean.substr(0, cTextClean.length - 1);
-		
-		//isprofanity(cTextClean, function (t,words) {
-		//	b = t ? 'contains' : 'does not contain';
-		//	self.logger[self.currentmoduleinstance].info("In cleanString : " + '"' + cTextClean + '" ' + b + ' profanity ' + JSON.stringify(words));
-		//}, 'node_modules/isprofanity/data/profanity.csv', 'node_modules/isprofanity/data/exceptions.csv', 0.8);
 
-		return cTextClean;
+		return UTILITIES.cleanString(theString);
 	},
 
 	mergearticles: function (articlelist) {
