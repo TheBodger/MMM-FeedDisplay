@@ -319,7 +319,7 @@ Module.register("MMM-FeedDisplay", {
 				self.displayarticleidx = 0;
 			}
 
-			self.updateDom(150); // speed in milliseconds
+			self.updateDom(1500); // speed in milliseconds
 			
 		}, this.config.display.refreshtime); //perform every ? milliseconds.
 
@@ -387,6 +387,7 @@ Module.register("MMM-FeedDisplay", {
 		}
 
 		var altrowclassname = "altrow1";
+		var hilightclassname = "";
 
 		for (aidx = this.displayarticleidx; aidx < endidx; aidx++) {
 
@@ -467,34 +468,28 @@ Module.register("MMM-FeedDisplay", {
 				var textcontainer = document.createElement("div");
 				textcontainer.style = "width:" + this.config.display.modulewidth;
 
+				//(altrowclassname == "altrow1" ? "newaltrow1" : "newaltrow2");
+
 				if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
-					altrowclassname = (altrowclassname == "altrow1" ? "newaltrow1" : "newaltrow2"); //hilight the title when it is a new feed
+					hilightclassname = " newarticle "  //hilight the title when it is a new feed
 				};
 				
 				var titleDiv = document.createElement("div");
 				//add the source fontawesome Icon as well
-				titleDiv.className = "light bright medium maintext " + altrowclassname;
+				titleDiv.className = "light medium maintext " + hilightclassname + altrowclassname;
 
 				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
 				if (self.config.display.articledescription) {
-					titleDiv.innerHTML += `<br><span class="brighter small ${altrowclassname}">${tempdescription}</span>`
+					titleDiv.innerHTML += `<br><span class="light small desctext ${hilightclassname}  ${altrowclassname}">${tempdescription}</span>`
 				};
 
 				textcontainer.appendChild(titleDiv);
 				var metadiv = document.createElement("div");
-				metadiv.className = 'normal xsmall subtext ' + altrowclassname;
+				metadiv.className = 'xsmall subtext ' + hilightclassname + altrowclassname;
 				metadiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 				if (metadiv.innerHTML != '') {
 					textcontainer.appendChild(metadiv);
 				} //dont add if empty
-
-				if (altrowclassname == "newaltrow1") { //reverse the setting needs tidying up
-					altrowclassname = "altrow1"
-				}
-				else if (altrowclassname == "newaltrow2")
-				{
-					altrowclassname = "altrow2"
-				}
 
 				if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
 

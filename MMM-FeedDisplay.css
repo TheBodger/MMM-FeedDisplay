@@ -21,11 +21,6 @@
     display: block;
 }
 
-.newarticle {
-
-    color: yellow;
-}
-
 .divtextoverimg {
     width: 100%;
     position: absolute;
@@ -45,29 +40,44 @@
     text-align:justify;
 }
 
-.altrow2 {
-    color: rgb(200, 200, 200);
-}
-
-.newaltrow2 {
-    color: rgb(200, 200, 0);
-}
-
-.altrow1 {
-    color: rgb(250, 250, 250);
-}
-
-.newaltrow1 {
-    color: rgb(250, 250, 0 );
-}
+/* the order these appear in here determine their precedence !!*/
 
 .maintext {
     text-align: left;
+    color: white;
 }
 
 .subtext {
-    text-align: right
+    text-align: right;
+    color: #a0a0a0;
 }
+
+.desctext {
+    text-align: left;
+    color: #bbbbbb;
+}
+
+.newarticle {
+    color: yellow;
+}
+
+.altrow2 {
+    filter: brightness(0.85);
+}
+
+.newaltrow2 {
+    filter: brightness(0.85);
+}
+
+.altrow1 {
+    filter: brightness(0.99);
+}
+
+.newaltrow1 {
+    filter: brightness(0.99);
+}
+
+
 
 .twitterblue {
     color: rgb(29,161,242);
@@ -85,18 +95,23 @@
 
 
 /* over ride the default brightness*/
-.dimmed {
+/* not required as brightness controlled at the class level
+
+div.MMM-FeedDisplay .dimmed {
     filter: brightness(0.60);
 }
 
-.normal {
-    filter: brightness(0.80)
+div.MMM-FeedDisplay .normal {
+    filter: brightness(0.80);
 }
 
-.brighter {
-    filter: brightness(0.82)
+div.MMM-FeedDisplay .brighter {
+    filter: brightness(0.82);
 }
 
-.bright {
-    filter: brightness(1.00)
+div.MMM-FeedDisplay .bright {
+    filter: brightness(1.00);
+    color: red;
 }
+
+*/
