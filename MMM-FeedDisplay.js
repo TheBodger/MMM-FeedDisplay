@@ -441,14 +441,17 @@ Module.register("MMM-FeedDisplay", {
 					titleDiv.innerHTML += `<br>${tempdescription}`
 				};
 
+				var metaSpan = document.createElement('span');
+				metaSpan.className = 'xsmall bright subtext'
+				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
+
 				allTextDiv.appendChild(titleDiv);
 
-				var metaDiv = document.createElement('div');
-				metaDiv.className = 'xsmall bright subtext'
-
-				metaDiv.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
-
-				if (metaDiv.innerHTML != '') { allTextDiv.appendChild(metaDiv); } //dont add if empty
+				var metaSpan = document.createElement('span');
+				metaSpan.className = 'xsmall bright subtext'
+				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+				if (metaSpan.innerHTML != '') { allTextDiv.appendChild(metaSpan); } //dont add if empty
 
 				if (self.config.display.textbelowimage) {
 					trext += imageMain.outerHTML  ;
