@@ -77,8 +77,6 @@
     filter: brightness(0.99);
 }
 
-
-
 .twitterblue {
     color: rgb(29,161,242);
 }
@@ -93,25 +91,3 @@
     color: rgb(255, 67, 0 );
 }
 
-
-/* over ride the default brightness*/
-/* not required as brightness controlled at the class level
-
-div.MMM-FeedDisplay .dimmed {
-    filter: brightness(0.60);
-}
-
-div.MMM-FeedDisplay .normal {
-    filter: brightness(0.80);
-}
-
-div.MMM-FeedDisplay .brighter {
-    filter: brightness(0.82);
-}
-
-div.MMM-FeedDisplay .bright {
-    filter: brightness(1.00);
-    color: red;
-}
-
-*/
