@@ -443,7 +443,7 @@ Module.register("MMM-FeedDisplay", {
 
 				var metaSpan = document.createElement('span');
 				metaSpan.className = 'xsmall bright subtext' + newarticleClass;
-				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+				metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
 
 				allTextDiv.appendChild(titleDiv);
@@ -481,7 +481,7 @@ Module.register("MMM-FeedDisplay", {
 
 				var metaSpan = document.createElement('span');
 				metaSpan.className = 'xsmall bright subtext' + hilightclassname + altrowclassname;
-				metaSpan.innerHTML = `${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+				metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
 
 				textcontainer.appendChild(titleDiv);
