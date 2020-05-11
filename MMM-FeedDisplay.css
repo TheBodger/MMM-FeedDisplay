@@ -45,20 +45,20 @@
     text-align:justify;
 }
 
-.altrow1 {
+.altrow2 {
     color: rgb(200, 200, 200);
 }
 
-.newaltrow1 {
+.newaltrow2 {
     color: rgb(200, 200, 0);
 }
 
-.altrow2 {
-    color: rgb(225, 225, 225);
+.altrow1 {
+    color: rgb(240, 240, 240);
 }
 
-.newaltrow2 {
-    color: rgb(225, 225, 0 );
+.newaltrow1 {
+    color: rgb(240, 240, 0 );
 }
 
 .maintext {

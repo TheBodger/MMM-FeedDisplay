@@ -473,11 +473,11 @@ Module.register("MMM-FeedDisplay", {
 				
 				var titleDiv = document.createElement("div");
 				//add the source fontawesome Icon as well
-				titleDiv.className = "bright medium maintext" + altrowclassname;
+				titleDiv.className = "light bright medium maintext " + altrowclassname;
 
 				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
 				if (self.config.display.articledescription) {
-					titleDiv.innerHTML += `<br><span class="normal small">${tempdescription}</span>`
+					titleDiv.innerHTML += `<br><span class="normal small ${altrowclassname}">${tempdescription}</span>`
 				};
 
 				textcontainer.appendChild(titleDiv);
