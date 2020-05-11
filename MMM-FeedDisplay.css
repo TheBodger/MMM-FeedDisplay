@@ -54,11 +54,11 @@
 }
 
 .altrow1 {
-    color: rgb(240, 240, 240);
+    color: rgb(250, 250, 250);
 }
 
 .newaltrow1 {
-    color: rgb(240, 240, 0 );
+    color: rgb(250, 250, 0 );
 }
 
 .maintext {
@@ -94,7 +94,7 @@
 }
 
 .brighter {
-    filter: brightness(0.90)
+    filter: brightness(0.82)
 }
 
 .bright {

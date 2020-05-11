@@ -297,7 +297,7 @@ Module.register("MMM-FeedDisplay", {
 
 		self.buildwrapper();
 
-		self.updateDom(); // speed in milliseconds
+		self.updateDom(2000); // speed in milliseconds
 
 		this.timer = setInterval(function () {
 
