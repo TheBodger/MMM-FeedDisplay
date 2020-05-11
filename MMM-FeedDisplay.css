@@ -93,6 +93,10 @@
     filter: brightness(0.80)
 }
 
+.brighter {
+    filter: brightness(0.90)
+}
+
 .bright {
     filter: brightness(1.00)
 }
