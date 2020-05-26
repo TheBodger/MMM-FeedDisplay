@@ -39,7 +39,7 @@ Module.register("MMM-FeedDisplay", {
 										//default - mirror the instagram2020 format with an image
 										//TODO add alternative formats
 			hilightnewarticles: true,	//any never before shown feeds will be hilighted (all initially)
-			modulewidth: "10vw",		//constrain the width to this // maybe should go into the css
+			modulewidth: "32vw",		//constrain the width to this // maybe should go into the css
 			refreshtime: 5000,			//5000, refresh the displayed stuff every 5 seconds
 			rotationstyle: 'default',	//how to rotate the list of articles on refresh cycle
 										//the refresh cycle is reset when new articles are made available
@@ -472,7 +472,7 @@ Module.register("MMM-FeedDisplay", {
 				
 				var titleDiv = document.createElement("div");
 				//add the source fontawesome Icon as well
-				titleDiv.className = "light medium maintext " + hilightclassname + altrowclassname;
+				titleDiv.className = "light smallish maintext " + hilightclassname + altrowclassname;
 
 				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
 				if (self.config.display.articledescription) {

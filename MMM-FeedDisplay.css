@@ -1,8 +1,13 @@
-﻿.feeddisplay {
+﻿/* adjust to suit the actual display required*/
+.feeddisplay { 
     max-width: calc(33.3333333vw - 40px);
 }
 
-.crop {
+body { /* override for a smaller screen */
+    margin: 10px;
+}
+
+    .crop {
     overflow: hidden;
     max-height: 18vw;
 }
@@ -101,3 +106,9 @@
     -webkit-mask-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0%, black 3%, black 97%, transparent 100%);
 }
 
+/* some extra sizes for the font*/
+
+.smallish {
+    font-size:24px;
+    line-height:28px;
+}
