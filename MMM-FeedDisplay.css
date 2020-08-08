@@ -7,7 +7,7 @@ body { /* override for a smaller screen */
     margin: 10px;
 }
 
-    .crop {
+.crop {
     overflow: hidden;
     max-height: 18vw;
 }
@@ -18,6 +18,47 @@ body { /* override for a smaller screen */
     display: block;
     max-width: 18vw; /* controls the resizing of the image */
     min-height: 8vw;
+}
+
+
+.small_crop {
+    overflow: hidden;
+    max-height: 18vw;
+}
+
+.small_imgstyle {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-width: 18vw; /* controls the resizing of the image */
+    min-height: 8vw;
+}
+
+.medium_crop {
+    overflow: hidden;
+    max-height: 36vw;
+}
+
+.medium_imgstyle {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-width: 36vw; /* controls the resizing of the image */
+    min-height: 16vw;
+}
+
+
+.large_crop {
+    overflow: hidden;
+    max-height: 72vw;
+}
+
+.large_imgstyle {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-width: 72vw; /* controls the resizing of the image */
+    min-height: 32vw;
 }
 
 .txtstyle {
@@ -40,9 +81,30 @@ body { /* override for a smaller screen */
 .divtextbelowimg {
     width: 100%;
     position: relative;
-    max-width: 18vw; /* must have white space around the operand */
+    max-width: 18vw; /* matches the width above*/
     /*background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.1) 7%, rgba(0,0,0,0.3) 14%, rgba(0,0,0,0.4) 31%,rgba(0,0,0,0.4)94%,rgba(0,0,0,0.0)100%);*/
     text-align:justify;
+}
+.small_divtextbelowimg {
+    width: 100%;
+    position: relative;
+    max-width: 18vw; /* matches the width above*/
+    /*background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.1) 7%, rgba(0,0,0,0.3) 14%, rgba(0,0,0,0.4) 31%,rgba(0,0,0,0.4)94%,rgba(0,0,0,0.0)100%);*/
+    text-align: justify;
+}
+.medium_divtextbelowimg {
+    width: 100%;
+    position: relative;
+    max-width: 36vw; /* matches the width above*/
+    /*background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.1) 7%, rgba(0,0,0,0.3) 14%, rgba(0,0,0,0.4) 31%,rgba(0,0,0,0.4)94%,rgba(0,0,0,0.0)100%);*/
+    text-align: justify;
+}
+.large_divtextbelowimg {
+    width: 100%;
+    position: relative;
+    max-width: 72vw; /* matches the width above*/
+    /*background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.1) 7%, rgba(0,0,0,0.3) 14%, rgba(0,0,0,0.4) 31%,rgba(0,0,0,0.4)94%,rgba(0,0,0,0.0)100%);*/
+    text-align: justify;
 }
 
 /* the order these appear in here determine their precedence !!*/

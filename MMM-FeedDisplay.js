@@ -31,6 +31,11 @@ Module.register("MMM-FeedDisplay", {
 			articledescription: false,	//show the article description 
 			articletitle: true,			//show the article title
 			articlimage: false,			//if an image has been passed as a url, then include it, if missing dont (no nasty missing image /size)
+			articlesize: "small",		//determines the size used for cropping when an image is present
+										//the crop and imgstyle classes are prepended with the size and held in the MMM-FeedDisplay.css file
+										//default if small_crop and small_imgstyle
+										//additional sizes are medium and large
+									
 			clearhilighttime: 10000,	//leave the highlights in place for at least this time period, negating losing highlights as multiple feeds come in
 			feedtitle: false,			//TODO display whatever title(s) of the feed has been provided for a group of arcticles above the articles
 			firstfulltext: false,		//the top most text only post contains all text
@@ -87,20 +92,6 @@ Module.register("MMM-FeedDisplay", {
 		if (config.article != null) { this.config.article = Object.assign({}, this.defaults.article, config.article); }
 
 	},
-
-	//this.name String The name of the module.
-	//this.identifier String This is a unique identifier for the module instance.
-	//this.hidden Boolean This represents if the module is currently hidden(faded away).
-	//this.config Boolean The configuration of the module instance as set in the user's config.js file. This config will also contain the module's defaults if these properties are not over- written by the user config.
-	//this.data Object The data object contain additional metadata about the module instance. (See below)
-
-
-	//The this.data data object contain the following metadata:
-	//	data.classes - The classes which are added to the module dom wrapper.
-	//	data.file - The filename of the core module file.
-	//	data.path - The path of the module folder.
-	//	data.header - The header added to the module.
-	//	data.position - The position in which the instance will be shown.
 
 	start: function () {
 
@@ -177,12 +168,6 @@ Module.register("MMM-FeedDisplay", {
 			Log.log(this.name + " received a system notification: " + notification);
 		}
 
-		//this.sendNotification(notification, payload)
-		//notification String - The notification identifier.
-		//payload AnyType - Optional.A notification payload.
-		//If you want to send a notification to all other modules, use the sendNotification(notification, payload).All other modules will receive the message via the notificationReceived method.In that case, the sender is automatically set to the instance calling the sendNotification method.
-
-
 		if (notification == 'ALL_MODULES_STARTED') {
 			//build my initial payload for any providers listening to me
 
@@ -200,9 +185,6 @@ Module.register("MMM-FeedDisplay", {
 				Log.log("Got some new data @ " + this.showElapsed());
 
 				//send the data to the aggregator
-
-				//console.log(payload);
-
 				this.sendNotificationToNodeHelper("AGGREGATE_THIS", { moduleinstance: self.identifier, payload :payload});
 
 			}
@@ -242,14 +224,6 @@ Module.register("MMM-FeedDisplay", {
 			return diffYears + "y";
 		}
 	},
-
-	//ALL_MODULES_STARTED - All modules are started.You can now send notifications to other modules.
-	//DOM_OBJECTS_CREATED - All dom objects are created.The system is now ready to perform visual changes.
-	//MODULE_DOM_CREATED - This module 's dom has been fully loaded. You can now access your module's dom objects.
-
-	//When using a node_helper, the node helper can send your module notifications.When this module is called, it has 2 arguments:
-	//notification - String - The notification identifier.
-	//payload - AnyType - The payload of a notification.
 
 	socketNotificationReceived: function(notification, payload) {
 		Log.log(this.identifier + "hello, received a socket notification @ " +  this.showElapsed() + " " + notification + " - Payload: " + payload);
@@ -370,6 +344,8 @@ Module.register("MMM-FeedDisplay", {
 
 		var trext = '';
 
+		self.config.display.articlesize = self.config.display.articlesize.toLowerCase();
+
 		//pull the articles starting at the current idx for the display count, wrapping if required
 		//wrapping is required when the aidx > totalarticlcount 
 		//so we need a calculation that will return a pseudo index such that for all values of aidx we point to a valid array item
@@ -416,8 +392,8 @@ Module.register("MMM-FeedDisplay", {
 				imageMain.style = "position:relative";
 
 				var actualImage = document.createElement('div');
-				actualImage.className = 'crop';
-				actualImage.innerHTML = `<img class='img_feather imgstyle' src='${self.displayarticles[tidx].imageURL}' alt=''  />`;
+				actualImage.className = `${self.config.display.articlesize}_crop`;
+				actualImage.innerHTML = `<img class='img_feather ${self.config.display.articlesize}_imgstyle' src='${self.displayarticles[tidx].imageURL}' alt=''  />`;
 
 				imageMain.appendChild(actualImage);
 
@@ -428,13 +404,20 @@ Module.register("MMM-FeedDisplay", {
 				};
 
 				var allTextDiv = document.createElement('div');
-				allTextDiv.className = (self.config.display.textbelowimage ? 'divtextbelowimg':'divtextoverimg') + " txtstyle";
+				allTextDiv.className = (self.config.display.textbelowimage ? `${self.config.display.articlesize}_divtextbelowimg`:'divtextoverimg') + " txtstyle";
 				
 				var titleDiv = document.createElement('div');
 
 				//add the source fontawesome Icon
 
-				titleDiv.className = 'xsmall bright' + newarticleClass;
+				//font size Dependant on the artilcesize - small = xsmall, medium = small, large = medium
+
+				var fontclass = 'xsmall';
+
+				if (self.config.display.articlesize == 'medium') { var fontclass = 'small'; }
+				else if(self.config.display.articlesize == 'large') { var fontclass = 'medium';}
+
+				titleDiv.className = fontclass + ' bright' + newarticleClass;
 				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + `${temptitle}`;
 
 				if (self.config.display.articledescription) {
@@ -442,7 +425,7 @@ Module.register("MMM-FeedDisplay", {
 				};
 
 				var metaSpan = document.createElement('span');
-				metaSpan.className = 'xsmall bright subtext ' + newarticleClass;
+				metaSpan.className = fontclass + ' bright subtext ' + newarticleClass;
 				metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
 				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
 
@@ -498,12 +481,6 @@ Module.register("MMM-FeedDisplay", {
 
 	},
 
-	//this.sendSocketNotification(notification, payload)
-	//notification String - The notification identifier.
-	//payload AnyType - Optional.A notification payload.
-	//If you want to send a notification to the node_helper, use the sendSocketNotification(notification, payload).
-	//Only the node_helper of this module will receive the socket notification.
-
 	sendNotificationToNodeHelper: function (notification, payload) {
 		this.sendSocketNotification(notification, payload);
 	},
@@ -511,10 +488,7 @@ Module.register("MMM-FeedDisplay", {
 	doSomeTranslation: function () {
 		var timeUntilEnd = moment(event.endDate, "x").fromNow(true);
 		this.translate("RUNNING", { "timeUntilEnd": timeUntilEnd });
-
-		// Will return a translated string for the identifier RUNNING, replacing `{timeUntilEnd}` with the contents of the variable `timeUntilEnd` in the order that translator intended.
 	},
-
 
 });
 

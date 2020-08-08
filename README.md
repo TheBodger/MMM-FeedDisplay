@@ -105,6 +105,7 @@ To use this module, add the following configuration block to the modules array i
 | `artarticledescription`                | *Optional* - show article description <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `articletitle`                | *Optional* - show article title <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `true`
 | `articlimage`                | *Optional* - show article image if provided<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
+| `articlesize`                | *Optional* - determines the size used for cropping and sizing when an image is present<br><br> **Possible values:** `small`,`medium`, `large`.<br> **Default value:** `small`
 | `articlecount`                | *Optional* - how many articles to show on the magic mirror<br><br> **Possible values:** any number.<br> **Default value:** `10`
 | `hilightnewarticles`                | *Optional* - highlight new articles<br><br> **Possible values:**  `true`,`false`.<br> **Default value:** `true`
 | `clearhilighttime`                | *Optional* - how many milliseconds to highlight new articles for<br><br> **Possible values:** any number.<br> **Default value:** `10000`
@@ -126,6 +127,8 @@ Because the config is multi layered (config, then article and display - addition
 The IDs must match between providers and consumers. Being a case sensitive environment extra care is needed here.
 
 The alternate method of merging articles from disparate feeds requires that each feed must be provided with a unique title in the RSSSource area of the payload
+
+articlesize determines which CSS class is used from MMM-FeedDisplay.css and the font sizes either in main.css or custom.css - additional sizes can be created by adding new entries into the module CSS. Font sizes will default to xsmall
 
 
 #### Detailed Article config options:
