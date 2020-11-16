@@ -42,6 +42,8 @@ Module.register("MMM-FeedDisplay", {
 			formatstyle: 'default',		//the format to use for whatever article options to display have been included
 										//default - mirror the tweeter format for no image
 										//default - mirror the instagram2020 format with an image
+										//list - a list in a table of all entries using the other display options to determine 
+										//  what details to include, length of details etc. Currently always includes title
 										//TODO add alternative formats
 			hilightnewarticles: true,	//any never before shown feeds will be hilighted (all initially)
 			modulewidth: "32vw",		//constrain the width to this // maybe should go into the css
@@ -63,14 +65,14 @@ Module.register("MMM-FeedDisplay", {
 
 			//article ordered details, define how the aggregator returns the current list of articles
 
-			mergetype: 'none',		// how to merge multiple feeds togther
+			mergetype: 'none',		// how to merge multiple feeds together
 									// none - no merging
 									// merge - merge all feed details before applying the order type
 									// alternate - merge by taking alternate articles from each feed (i.e. 1st,1st,1st,2nd,2nd,2nd), will apply sort order before merging 
 			ordertype: 'default',	//options are 
-									//	default - fifo grouped by the title as this is how they are recevied from the provider
+									//	default - fifo grouped by the title as this is how they are received from the provider
 									//	date, - larger numbers are younger so sort descending
-									//  age, - smaller number are younger so sort ascending
+									//  age, - smaller number are younger so sort ascending - this is best option for ordering latest post at top of module
 									//  sent, - the date/timestamp the article was sent to the main module - to be used with clipping - sort descending for youngest at top
 									//  TODO - we may want other options such as by provider or alphabetically title or most active feed
 			order: 'ascending',		//options are ascending or descending, so dates (As date/sent youngest at the top = descending, for age, ascending for top )
@@ -365,6 +367,8 @@ Module.register("MMM-FeedDisplay", {
 		var altrowclassname = "altrow1";
 		var hilightclassname = "";
 
+		if (self.config.display.formatstyle == 'list') { var listtable = document.createElement("table"); listtable.style.border = "thin solid #0000FF"; }
+
 		for (aidx = this.displayarticleidx; aidx < endidx; aidx++) {
 
 			tidx = aidx;
@@ -385,97 +389,139 @@ Module.register("MMM-FeedDisplay", {
 				var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.display.textlength)
 			}
 
-			if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null) { // for image  feeds 
+			if (self.config.display.formatstyle == 'list') { //use a simple list format
 
-				var imageMain = document.createElement('div');
-				imageMain.className = 'div_feather';
-				imageMain.style = "position:relative";
-
-				var actualImage = document.createElement('div');
-				actualImage.className = `${self.config.display.articlesize}_crop`;
-				actualImage.innerHTML = `<img class='img_feather ${self.config.display.articlesize}_imgstyle' src='${self.displayarticles[tidx].imageURL}' alt=''  />`;
-
-				imageMain.appendChild(actualImage);
-
-				var newarticleClass = "";
-
-				if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
-					newarticleClass = " newarticle"; //hilight the title when it is a new feed
-				};
-
-				var allTextDiv = document.createElement('div');
-				allTextDiv.className = (self.config.display.textbelowimage ? `${self.config.display.articlesize}_divtextbelowimg`:'divtextoverimg') + " txtstyle";
-				
-				var titleDiv = document.createElement('div');
-
-				//add the source fontawesome Icon
-
-				//font size Dependant on the artilcesize - small = xsmall, medium = small, large = medium
-
-				var fontclass = 'xsmall';
-
-				if (self.config.display.articlesize == 'medium') { var fontclass = 'small'; }
-				else if(self.config.display.articlesize == 'large') { var fontclass = 'medium';}
-
-				titleDiv.className = fontclass + ' bright' + newarticleClass;
-				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + `${temptitle}`;
-
-				if (self.config.display.articledescription) {
-					titleDiv.innerHTML += `<br>${tempdescription}`
-				};
-
-				var metaSpan = document.createElement('span');
-				metaSpan.className = fontclass + ' bright subtext ' + newarticleClass;
-				metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
-				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
-
-				allTextDiv.appendChild(titleDiv);
-
-				if (self.config.display.textbelowimage) {
-
-					trext += imageMain.outerHTML  ;
-					trext += allTextDiv.outerHTML  ;
-				}
-				else {
-
-					imageMain.appendChild(allTextDiv);
-					trext += imageMain.outerHTML  ;
-                }
-
-			}
-			else  //format for text only feeds
-
-			{
-				var textcontainer = document.createElement("div");
-				textcontainer.style = "width:" + this.config.display.modulewidth;
+				//build a table entry for each display article controlled by all the various parameters
 
 				if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
 					hilightclassname = " newarticle "  //hilight the title when it is a new feed
 				};
-				
-				var titleDiv = document.createElement("div");
-				//add the source fontawesome Icon as well
-				titleDiv.className = "light smallish maintext " + hilightclassname + altrowclassname;
 
-				titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
+				var listrow = document.createElement("tr");
+
+				var listentry = document.createElement("td");
+				listentry.style.border = "thin solid #00FFFF";
+				listentry.className = "light smallish maintext " + hilightclassname + altrowclassname;
+
+				listentry.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
 				if (self.config.display.articledescription) {
-					titleDiv.innerHTML += `<br><span class="light small desctext ${hilightclassname} ${altrowclassname}">${tempdescription}</span>`
+					listentry.innerHTML += `<br><span class="light small desctext ${hilightclassname} ${altrowclassname}">${tempdescription}</span>`
 				};
 
-				var metaSpan = document.createElement('span');
-				metaSpan.className = 'xsmall bright subtext ' + hilightclassname + altrowclassname;
-				metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
-				if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
+				listrow.appendChild(listentry);
 
-				textcontainer.appendChild(titleDiv);
-				
+				listentry = null;
+				var listentry = document.createElement("td")
+				listentry.className = 'xsmall bright subtext ' + hilightclassname + altrowclassname;
+				listentry.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+				if (listentry.innerHTML != '') { listrow.appendChild(listentry);; } //dont add if empty
+
+				listtable.appendChild(listrow);
+
 				if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
 
-				trext += textcontainer.outerHTML;
+			}
+			else {
+				if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null) { // for image  feeds 
 
+					var imageMain = document.createElement('div');
+					imageMain.className = 'div_feather';
+					imageMain.style = "position:relative";
+
+					var actualImage = document.createElement('div');
+					actualImage.className = `${self.config.display.articlesize}_crop`;
+					actualImage.innerHTML = `<img class='img_feather ${self.config.display.articlesize}_imgstyle' src='${self.displayarticles[tidx].imageURL}' alt=''  />`;
+
+					imageMain.appendChild(actualImage);
+
+					var newarticleClass = "";
+
+					if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
+						newarticleClass = " newarticle"; //hilight the title when it is a new feed
+					};
+
+					var allTextDiv = document.createElement('div');
+					allTextDiv.className = (self.config.display.textbelowimage ? `${self.config.display.articlesize}_divtextbelowimg` : 'divtextoverimg') + " txtstyle";
+
+					var titleDiv = document.createElement('div');
+
+					//add the source fontawesome Icon
+
+					//font size Dependant on the artilcesize - small = xsmall, medium = small, large = medium
+
+					var fontclass = 'xsmall';
+
+					if (self.config.display.articlesize == 'medium') { var fontclass = 'small'; }
+					else if (self.config.display.articlesize == 'large') { var fontclass = 'medium'; }
+
+					titleDiv.className = fontclass + ' bright' + newarticleClass;
+					titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '');
+
+					if (self.config.display.articletitle) {
+						titleDiv.innerHTML += `${temptitle}`
+					};
+
+					if (self.config.display.articledescription) {
+						titleDiv.innerHTML += `<br>${tempdescription}`
+					};
+
+					var metaSpan = document.createElement('span');
+					metaSpan.className = fontclass + ' bright subtext ' + newarticleClass;
+					metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+					if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
+
+					allTextDiv.appendChild(titleDiv);
+
+					if (self.config.display.textbelowimage) {
+
+						trext += imageMain.outerHTML;
+						trext += allTextDiv.outerHTML;
+					}
+					else {
+
+						imageMain.appendChild(allTextDiv);
+						trext += imageMain.outerHTML;
+					}
+
+				}
+				else  //format for text only feeds
+
+				{
+					var textcontainer = document.createElement("div");
+					textcontainer.style = "width:" + this.config.display.modulewidth;
+
+					if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
+						hilightclassname = " newarticle "  //hilight the title when it is a new feed
+					};
+
+					var titleDiv = document.createElement("div");
+					//add the source fontawesome Icon as well
+					titleDiv.className = "light smallish maintext " + hilightclassname + altrowclassname;
+
+					titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
+					if (self.config.display.articledescription) {
+						titleDiv.innerHTML += `<br><span class="light small desctext ${hilightclassname} ${altrowclassname}">${tempdescription}</span>`
+					};
+
+					var metaSpan = document.createElement('span');
+					metaSpan.className = 'xsmall bright subtext ' + hilightclassname + altrowclassname;
+					metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+					if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
+
+					textcontainer.appendChild(titleDiv);
+
+					if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
+
+					trext += textcontainer.outerHTML;
+
+				}
 			}
 
 		}
+
+		if (self.config.display.formatstyle == 'list') {
+			trext = listtable.outerHTML;
+        }
 
 		return trext;
 

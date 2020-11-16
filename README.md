@@ -23,6 +23,11 @@ To enable this there are 5 Provider modules:
 4) Reddit
 5) Instagram
 
+### Example of the list formatstyle
+![Example of MMM-FeedDisplay output](images/listexample.png?raw=true "Example screenshot")
+
+This example includes 3 display modules from left to right - list mode of RSS text feeds, default mode, list mode of instagram posts
+
 # Table of Contents
 
 1. [Dependencies](#Dependencies)
