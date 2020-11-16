@@ -61,7 +61,7 @@ To install the module, use your terminal to:
 
 ### MagicMirror² Configuration
 
-To use this module, add the following configuration block to the modules array in the `config/config.js` file:
+To use this module, add a configuration block to the modules array in the `config/config.js` file similar to this:
 ```js
 		{
 			module: "MMM-FeedDisplay",
