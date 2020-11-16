@@ -122,6 +122,7 @@ To use this module, add a configuration block to the modules array in the `confi
 | `textbelowimage`                | *Optional* - all displayed text appears below and separate to the image. Otherwise, all text is superimposed over the bottom of the image<br><br> **Possible values:**  `true`,`false`.<br> **Default value:** `true`
 | `textlength`                | *Optional* - the number of characters of the title and description to show if they are to be displayed. 0 means no truncation. Applied after text is cleaned<br><br> **Possible values:**`0`, any number of characters<br> **Default value:** `0` - no truncation		
 | `wraparticles`                | *Optional* - ensure all the articlecount article slots are filled. Otherwise articles are scrolled until the last one is only visible,<br><br> **Possible values:**  `true`,`false`.<br> **Default value:** `false`
+| `formatstyle`                | *Optional* -the format to use fordisplaying articles based on the paramaters above, default provides a format simillar to twitter and instagram, list will list what ever values have been selected in the other paramaters in a simple list format - it currently always shows the post title,<br><br> **Possible values:**  `default`,`list`.<br> **Default value:** `default`
 
 ### Additional_Notes
 
