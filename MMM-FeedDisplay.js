@@ -401,6 +401,18 @@ Module.register("MMM-FeedDisplay", {
 
 				var listentry = document.createElement("td");
 				listentry.style.border = "thin solid #00FFFF";
+
+				if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null){
+					var actualImage = document.createElement('div');
+					actualImage.innerHTML = `<img src='${self.displayarticles[tidx].imageURL}' style=width:30px alt=''  />`;
+					listentry.appendChild(actualImage);
+				} 
+
+				listrow.appendChild(listentry);
+				listentry = null;
+
+				var listentry = document.createElement("td");
+				listentry.style.border = "thin solid #00FFFF";
 				listentry.className = "light smallish maintext " + hilightclassname + altrowclassname;
 
 				listentry.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
@@ -422,15 +434,27 @@ Module.register("MMM-FeedDisplay", {
 
 			}
 			else {
-				if (self.config.display.articlimage && this.displayarticles[tidx].imageURL != null) { // for image  feeds 
+
+				//added support for videos in place of an img url
+
+				if (self.config.display.articlimage && (this.displayarticles[tidx].imageURL != null || this.displayarticles[tidx].videoURL != null)) { // for image  feeds
 
 					var imageMain = document.createElement('div');
 					imageMain.className = 'div_feather';
 					imageMain.style = "position:relative";
 
+					//add the image if present
 					var actualImage = document.createElement('div');
-					actualImage.className = `${self.config.display.articlesize}_crop`;
-					actualImage.innerHTML = `<img class='img_feather ${self.config.display.articlesize}_imgstyle' src='${self.displayarticles[tidx].imageURL}' alt=''  />`;
+
+					if (this.displayarticles[tidx].imageURL != null) {
+						actualImage.className = `${self.config.display.articlesize}_crop`;
+						actualImage.innerHTML = `<img class='img_feather ${self.config.display.articlesize}_imgstyle' src='${self.displayarticles[tidx].imageURL}' alt=''>`;
+					}
+					else { //add the video inline
+						actualImage.innerHTML = `<video id="RANDOMDSFAASDFJ" class='img_feather ${self.config.display.articlesize}_imgstyle' src='${self.displayarticles[tidx].videoURL.replace(".gifv", ".mp4")}' autoplay='true' muted='muted' loop='loop'></video><script type="text/javascript"> document.getElementById("RANDOMDSFAASDFJ").play();alert("hello")</script>`;
+                    }
+
+					Log.log(actualImage.innerHTML);
 
 					imageMain.appendChild(actualImage);
 

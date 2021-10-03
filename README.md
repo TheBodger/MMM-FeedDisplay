@@ -109,7 +109,7 @@ To use this module, add a configuration block to the modules array in the `confi
 | `articleage`                | *Optional* - show formatted article age on a separate meta data line, may include the sourcename<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `artarticledescription`                | *Optional* - show article description <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `articletitle`                | *Optional* - show article title <br><br> **Possible values:** `true`,`false`.<br> **Default value:** `true`
-| `articlimage`                | *Optional* - show article image if provided<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
+| `articlimage`                | *Optional* - show article image or video if provided<br><br> **Possible values:** `true`,`false`.<br> **Default value:** `false`
 | `articlesize`                | *Optional* - determines the size used for cropping and sizing when an image is present<br><br> **Possible values:** `small`,`medium`, `large`.<br> **Default value:** `small`
 | `articlecount`                | *Optional* - how many articles to show on the magic mirror<br><br> **Possible values:** any number.<br> **Default value:** `10`
 | `hilightnewarticles`                | *Optional* - highlight new articles<br><br> **Possible values:**  `true`,`false`.<br> **Default value:** `true`

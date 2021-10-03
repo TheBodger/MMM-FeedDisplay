@@ -26,14 +26,6 @@ body { /* override for a smaller screen */
     max-height: 18vw;
 }
 
-.small_imgstyle {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    max-width: 18vw; /* controls the resizing of the image */
-    min-height: 8vw;
-}
-
 .medium_crop {
     overflow: hidden;
     max-height: 36vw;
@@ -44,13 +36,15 @@ body { /* override for a smaller screen */
     margin-right: auto;
     display: block;
     max-width: 36vw; /* controls the resizing of the image */
-    min-height: 16vw;
+    max-height: 36vw;
 }
 
-
-.large_crop {
-    overflow: hidden;
-    max-height: 72vw;
+.small_imgstyle {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-width: 16vw; /* controls the resizing of the image */
+    max-height: 16vw;
 }
 
 .large_imgstyle {
@@ -58,7 +52,12 @@ body { /* override for a smaller screen */
     margin-right: auto;
     display: block;
     max-width: 72vw; /* controls the resizing of the image */
-    min-height: 32vw;
+    max-height: 72vw;
+}
+
+.large_crop {
+    overflow: hidden;
+    max-height: 72vw;
 }
 
 .txtstyle {
@@ -173,4 +172,29 @@ body { /* override for a smaller screen */
 .smallish {
     font-size:24px;
     line-height:28px;
+}
+
+/* added to support iframes */
+
+.wrap {
+    width: 320px;
+    height: 192px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.frame {
+    width: 1280px;
+    height: 786px;
+    border: 0;
+    -ms-transform: scale(0.25);
+    -moz-transform: scale(0.25);
+    -o-transform: scale(0.25);
+    -webkit-transform: scale(0.25);
+    transform: scale(0.25);
+    -ms-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
 }
