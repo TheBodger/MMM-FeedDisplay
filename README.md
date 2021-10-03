@@ -6,6 +6,9 @@ For an overview of how the MMM-Feedxxx interrelated modules work read the MMM-Fe
 
 This module receives feeds from providers, aggregates them and then formats them for display on the magic mirror. There can be multiple MMM-FeedDisplays active receiving feeds from 1 or many providers.
 
+
+Support for a videoURL within the RSS feed has been added. It will be displayed if the imageURL is blank and images should be displayed. It will be displayed using the same formatting rules as images as defined in the config entry for the module.
+
 ### Example
 ![Example of MMM-FeedDisplay output](images/screenshot.png?raw=true "Example screenshot")
 

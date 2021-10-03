@@ -7,6 +7,8 @@
  * MIT Licensed.
  */
 
+/* added support for a videoURL within the RSS feed. Will be displayed if the imageURL is blank and images should be displayed. uses the same formatting rules as images as defined in the config entry for the modeul */
+
 var startTime = new Date(); //use for getting elapsed times during debugging
 
 var feedDisplayPayload = { consumerid: '', providerid: '', payload: '' };
