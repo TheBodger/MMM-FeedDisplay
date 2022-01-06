@@ -131,7 +131,7 @@ To use this module, add a configuration block to the modules array in the `confi
 
 There are some options in the code marked as TODO. ignore these.
 
-Because the config is multi layered (config, then article and display - additional code is need to ensure that the entire config is merged with the defaults and passed to the ndoe_helper)
+Because the config is multi layered (config, then article and display - additional code is need to ensure that the entire config is merged with the defaults and passed to the node_helper)
 
 The IDs must match between providers and consumers. Being a case sensitive environment extra care is needed here.
 
