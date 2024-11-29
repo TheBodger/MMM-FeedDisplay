@@ -44,7 +44,8 @@ Module.register("MMM-FeedDisplay", {
 			formatstyle: 'default',		//the format to use for whatever article options to display have been included
 										//default - mirror the tweeter format for no image
 										//default - mirror the instagram2020 format with an image
-										//list - a list in a table of all entries using the other display options to determine 
+										//list - a list in a table of all entries using the other display options to determine
+										//lightbox - allow a list to spread acroos the selected screen area
 										//  what details to include, length of details etc. Currently always includes title
 										//TODO add alternative formats
 			hilightnewarticles: true,	//any never before shown feeds will be hilighted (all initially)
@@ -59,7 +60,8 @@ Module.register("MMM-FeedDisplay", {
 			textlength: 0,				//truncate the title and description each to this length and add ... to show it is truncated
 										//default is 0 which means show all, control over showing the title and is elsewhere
 										//length constraint is applied after the text is cleaned if requested
-			wraparticles: false,		//wrap into / fill all display slots (articlecount) 
+			wraparticles: false,		//wrap into / fill all display slots (articlecount)
+			
 
 	
 		},
@@ -84,6 +86,7 @@ Module.register("MMM-FeedDisplay", {
 									//  a value of 0 means no clipping
 			cleanedtext: false,		//removes any html tags and (TODO bad-words), leaving just text from title and description
 			ignorecategorylist: [], //ignore articles matching any category, full word, in this list i.e. ["horoscopes"]
+			ignoreIfNoImg: false,   //if article has no img (or video) then dont show it
 
 		},
 
@@ -305,9 +308,25 @@ Module.register("MMM-FeedDisplay", {
 
 	// Override dom generator.
 	getDom: function () {
+
+		var self = this;
+
 		Log.log(this.identifier + " Hello from getdom @" + this.showElapsed());
+
 		var wrapper = document.createElement("div");
+
+		if (self.config.display.formatstyle == 'lightbox') { //use a simple table format based on the width of each image / turn off everything except the image regardless
+
+			//use modulewidth to determine how many columns
+			//self.config.display.modulewidth
+
+			wrapper.className = 'lightbox-container';
+			wrapper.style = 'display: flex;flex-wrap: wrap;';
+
+		}
+
 		wrapper.innerHTML = this.buildwrapper();
+
 		return wrapper;
 	},
 
@@ -391,7 +410,10 @@ Module.register("MMM-FeedDisplay", {
 				var tempdescription = this.trunctext(this.displayarticles[tidx].description, self.config.display.textlength)
 			}
 
-			if (self.config.display.formatstyle == 'list') { //use a simple list format
+			//force a default handling of images if lighbox format
+
+			if(self.config.display.formatstyle == 'list')
+			{ //use a simple list format
 
 				//build a table entry for each display article controlled by all the various parameters
 
@@ -435,7 +457,8 @@ Module.register("MMM-FeedDisplay", {
 				if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
 
 			}
-			else {
+			else
+			{
 
 				//added support for videos in place of an img url
 
@@ -513,32 +536,35 @@ Module.register("MMM-FeedDisplay", {
 				else  //format for text only feeds
 
 				{
-					var textcontainer = document.createElement("div");
-					textcontainer.style = "width:" + this.config.display.modulewidth;
 
-					if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
-						hilightclassname = " newarticle "  //hilight the title when it is a new feed
-					};
+					if (!self.config.article.ignoreIfNoImg) {
+						var textcontainer = document.createElement("div");
+						textcontainer.style = "width:" + this.config.display.modulewidth;
 
-					var titleDiv = document.createElement("div");
-					//add the source fontawesome Icon as well
-					titleDiv.className = "light smallish maintext " + hilightclassname + altrowclassname;
+						if (self.config.display.hilightnewarticles && (new Date() - new Date(this.displayarticles[tidx]['sentdate'])) < self.config.display.clearhilighttime) {
+							hilightclassname = " newarticle "  //hilight the title when it is a new feed
+						};
 
-					titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
-					if (self.config.display.articledescription) {
-						titleDiv.innerHTML += `<br><span class="light small desctext ${hilightclassname} ${altrowclassname}">${tempdescription}</span>`
-					};
+						var titleDiv = document.createElement("div");
+						//add the source fontawesome Icon as well
+						titleDiv.className = "light smallish maintext " + hilightclassname + altrowclassname;
 
-					var metaSpan = document.createElement('span');
-					metaSpan.className = 'xsmall bright subtext ' + hilightclassname + altrowclassname;
-					metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
-					if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
+						titleDiv.innerHTML = ((this.displayarticles[tidx].sourceiconclass != null) ? `<span class='${this.displayarticles[tidx].sourceiconclass}'></span>` : '') + temptitle;
+						if (self.config.display.articledescription) {
+							titleDiv.innerHTML += `<br><span class="light small desctext ${hilightclassname} ${altrowclassname}">${tempdescription}</span>`
+						};
 
-					textcontainer.appendChild(titleDiv);
+						var metaSpan = document.createElement('span');
+						metaSpan.className = 'xsmall bright subtext ' + hilightclassname + altrowclassname;
+						metaSpan.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${(self.config.display.sourcenamelength > 0) ? this.displayarticles[tidx].source.substring(0, self.config.display.sourcenamelength) + ' - ' : ''}${(self.config.display.articleage) ? self.getStringTimeDifference(this.displayarticles[tidx].age + (new Date() - new Date(this.displayarticles[tidx].sentdate))) : ''}`;
+						if (metaSpan.innerHTML != '') { titleDiv.appendChild(metaSpan); } //dont add if empty
 
-					if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
+						textcontainer.appendChild(titleDiv);
 
-					trext += textcontainer.outerHTML;
+						if (altrowclassname == "altrow1") { altrowclassname = "altrow2" } else { altrowclassname = "altrow1" }
+
+						trext += textcontainer.outerHTML;
+					}
 
 				}
 			}
@@ -547,7 +573,7 @@ Module.register("MMM-FeedDisplay", {
 
 		if (self.config.display.formatstyle == 'list') {
 			trext = listtable.outerHTML;
-        }
+		}
 
 		return trext;
 

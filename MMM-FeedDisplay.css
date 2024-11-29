@@ -1,4 +1,4 @@
-﻿/* adjust to suit the actual display required*/
+/* adjust to suit the actual display required*/
 .feeddisplay { 
     max-width: calc(33.3333333vw - 40px);
 }
@@ -12,12 +12,17 @@ body { /* override for a smaller screen */
     max-height: 18vw;
 }
 
+.lighbox-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .imgstyle {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    max-width: 18vw; /* controls the resizing of the image */
-    min-height: 8vw;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  max-width: 18vw; /* controls the resizing of the image */
+  min-height: 8vw;
 }
 
 
