@@ -184,10 +184,10 @@ Module.register("MMM-FeedDisplay", {
 			Log.log("ALL MODULES STARTED");
 		}
 
-		if (notification == 'FEED_PROVIDER_DATA') {
+		if (notification == 'FEED_PROVIDER_DATA' || notification == 'PROVIDER_UPDATE') {
 			//some one said they have data, it might be for me !
 			
-			if (payload.consumerid == this.config.id) {
+			if (payload.consumerid == this.config.id || payload.TargetID == this.config.id) {
 
 				Log.log("Got some new data @ " + this.showElapsed());
 

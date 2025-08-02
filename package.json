@@ -16,10 +16,10 @@
     "Atom Feeds",
     "module"
   ],
-  "dependencies": {
-    "feedparser": "^2.2.9",
-    "isprofanity": "latest"
-  },
+	"dependencies": {
+		"feedparser": "^2.2.9",
+		"isprofanity": "latest"
+	},
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TheBodger/MMM-FeedDisplay/issues"
