@@ -89,10 +89,10 @@ module.exports = NodeHelper.create({
 				var feedstorekey = 'merged feed';
 				break;
 			case 'alternate':
-				var feedstorekey = payload.Payload.RSSFeedSource.title; // uses the same as for default, alternate merging happens after the sort
+				var feedstorekey = payload.source.title; // uses the same as for default, alternate merging happens after the sort
 				break;
 			default:
-				var feedstorekey = payload.Payload.RSSFeedSource.title;
+				var feedstorekey = payload.source.title;
 		}
 
 		//now we add the provided feeds to the feedstorage
@@ -116,7 +116,7 @@ module.exports = NodeHelper.create({
 
 			//we will have to handle tracking new articles here not in the main module
 
-			payload.Payload.Items.forEach(function (article) {
+			payload.payload.forEach(function (article) {
 
 				//check to see if we want to drop this article because of a category match
 
@@ -187,7 +187,7 @@ module.exports = NodeHelper.create({
 
 			//check to see if we want to drop this article because of a category match
 
-			payload.Payload.Items.forEach(function (article) {
+			payload.payload.forEach(function (article) {
 
 				if (!self.categorymatch(article.categories, moduleinstance)) {
 
